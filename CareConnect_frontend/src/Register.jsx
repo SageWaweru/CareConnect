@@ -22,15 +22,23 @@ const Register = () => {
           },
         }
       );
-      setMessage(response.data.message);
+      alert(response.data.message);
       navigate('/login');
 
     } catch (error) {
       console.error('Registration failed:', error);
       if (error.response) {
-        console.log('Error response:', error.response.data);
-        setMessage(error.response.data.message || 'Registration failed. Please try again.');
-      }
+        let errorMessage = "";
+
+        if (error.response.data.username) {
+          errorMessage = error.response.data.username[0]; 
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message; 
+        } else {
+          errorMessage = 'Registration failed. Please try again.'; 
+        }
+      
+        alert(errorMessage);      }
     }
   };
 

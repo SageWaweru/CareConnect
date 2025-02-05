@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
 from cloudinary.models import CloudinaryField
 from django.db.models import Avg
-
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 
 class CustomUser(AbstractUser):
      ROLE_CHOICES = [
@@ -50,32 +51,139 @@ class CaretakerProfile(models.Model):
             self.save()    
 
 class Review(models.Model):
-    caretaker_profile = models.ForeignKey(CaretakerProfile, on_delete=models.CASCADE)
+    caretaker = models.ForeignKey(CaretakerProfile, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    rating = models.IntegerField(choices=[(1, '1 Star'), (2, '2 Stars'), (3, '3 Stars'), (4, '4 Stars'), (5, '5 Stars')])
+    rating = models.PositiveIntegerField()
     review_text = models.TextField()
-    
+    created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        unique_together = ['caretaker_profile', 'user']
+        unique_together = ['caretaker', 'user']
 
     def save(self, *args, **kwargs):
-            is_new_review = not self.pk  # Check if this is a new review
+        # Ensure the rating is between 1 and 5
+        if self.rating < 1 or self.rating > 5:
+            raise ValidationError("Rating must be between 1 and 5.")
 
-            # Update the caretaker profile's rating if it's a new review
-            super().save(*args, **kwargs)  # Save the review first
-            if is_new_review:
-                self.caretaker_profile.number_of_ratings += 1
-            self.caretaker_profile.update_average_rating()  # Update the average rating after saving the review
-            super().save(*args, **kwargs)
+        is_new_review = not self.pk  # Check if this is a new review
+
+        super().save(*args, **kwargs)  # Save the review first
+
+        if is_new_review:
+            self.caretaker.number_of_ratings += 1
+            self.caretaker.update_average_rating()  # Update the average rating
+            self.caretaker.save()  # Save the caretaker after the review
 
     def delete(self, *args, **kwargs):
         # Update the caretaker profile's rating when deleting the review
-        self.caretaker_profile.number_of_ratings -= 1
-        self.caretaker_profile.update_average_rating()  # Recalculate the average rating
+        self.caretaker.number_of_ratings -= 1
+        self.caretaker.update_average_rating()  # Recalculate the average rating
+        self.caretaker.save()  # Save the caretaker after the deletion
         super().delete(*args, **kwargs)
 
     def __str__(self):
-        return f"Review for {self.caretaker_profile}: {self.rating} stars"
+        return f"Review for {self.caretaker}: {self.rating} stars"
+
+class Message(models.Model):
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="sent_messages")
+    receiver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="received_messages")
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Message from {self.sender} to {self.receiver}"
+
+class Reply(models.Model):
+    message = models.ForeignKey(Message, related_name="replies", on_delete=models.CASCADE)
+    sender = models.ForeignKey(CustomUser, related_name="sent_replies", on_delete=models.CASCADE)
+    receiver = models.ForeignKey(CustomUser, related_name="received_replies", on_delete=models.CASCADE, null=True, blank=True)  # Allow null values
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    reply_to = models.ForeignKey("self", on_delete=models.SET_NULL, null=True, blank=True, related_name="replies")
+
+    def __str__(self):
+        return f"{self.sender} -> {self.receiver}: {self.content[:20]}"
+    
+class JobPost(models.Model):
+    customer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="posted_jobs")
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    location = models.CharField(max_length=255)
+    required_skills = models.TextField()
+    pay_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    rate_type = models.CharField(max_length=10, choices=[('hour', 'Hour'), ('day', 'Day'), ('week', 'Week')], default='hour')
+    duration = models.CharField(max_length=100)  
+    status = models.CharField(
+        max_length=20,
+        choices=[("Open", "Open"), ("Closed", "Closed"), ("In Progress", "In Progress")],
+        default="Open",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
+class JobApplication(models.Model):
+    job = models.ForeignKey(JobPost, on_delete=models.CASCADE, related_name="applications")
+    caretaker = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="applications")
+    cover_letter = models.TextField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[("Pending", "Pending"), ("Accepted", "Accepted"), ("Rejected", "Rejected")],
+        default="Pending",
+    )
+    applied_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.caretaker.username} applied to {self.job.title}"
+
+# Vocational School Model
+class VocationalSchool(models.Model):
+    manager = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="school")  
+    name = models.CharField(max_length=255)
+    logo = CloudinaryField('image', null=True, blank=True,)
+    description = models.TextField()
+    location = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+# Course Model
+class Course(models.Model):
+    STATUS_CHOICES = [
+        ('open', 'Open'),
+        ('closed', 'Closed'),
+    ]
+
+    school = models.ForeignKey(VocationalSchool, on_delete=models.CASCADE, related_name="courses")
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.IntegerField(default=0)
+    duration = models.CharField(max_length=50)  
+    certification_approved = models.BooleanField(default=False)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')  # New field
 
 
-# Create your models here.
+    def __str__(self):
+        return self.title
+
+# Enrollment Model
+class Enrollment(models.Model):
+    caretaker = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="enrollments")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
+    name = models.CharField(max_length=255, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    age = models.PositiveIntegerField(blank=True, null=True)
+    approved = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('caretaker', 'course')
+
+# Certification Model
+class Certification(models.Model):
+    enrollment = models.OneToOneField(Enrollment, on_delete=models.CASCADE, null=True, blank=True, related_name="certification")
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Certification for {self.enrollment.course.title}"

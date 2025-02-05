@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom"; 
 import axios from "axios";
+import StarRating from "../StarRating";
 
 const ProfileView = () => {
   const [caretaker, setCaretaker] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [averageRating, setAverageRating] = useState(0); 
+  const [caretakerId, setCaretakerId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     certifications: "",
     skills: "",
     availability: "",
-    profilePicture: "",
+    profile_picture: "",
     rate: 0,
     rateType: "hour",
     ratings: 0,
@@ -24,7 +27,7 @@ const ProfileView = () => {
         setLoading(true); 
         const userId = localStorage.getItem("userId");
         const response = await axios.get(
-          `http://localhost:8000/api/api/caretaker-profiles/${userId}/`,
+          `http://localhost:8000/api/api/caretaker-profiles/user/${userId}/`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -34,13 +37,14 @@ const ProfileView = () => {
     
         if (response.data) {
           setCaretaker(response.data);
+          setCaretakerId(response.data.id);
           setFormData({
             name: response.data.name,
             certifications: response.data.certifications,
             skills: response.data.skills,
             availability: response.data.availability || "Part-time",
             ratings: response.data.ratings,
-            profilePicture: response.data.profile_picture,
+            profile_picture: response.data.profile_picture,
             rate: response.data.rate || 0,
             rateType: response.data.rate_type || "hour",
         });
@@ -60,6 +64,31 @@ const ProfileView = () => {
     fetchCaretaker();
   }, []);
   
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`
+        );
+        const reviews = response.data;
+        if (reviews.length > 0) {
+          const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);
+          const averageRating = totalRating / reviews.length;
+          setAverageRating(averageRating);
+        } else {
+          setAverageRating(0);
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+      }
+    };
+  
+    if (caretakerId) {
+      fetchReviews();
+    }
+  }, [caretakerId]);
+  
+
   const handleEdit = () => {
     setIsEditing(!isEditing);
   };
@@ -93,7 +122,7 @@ const ProfileView = () => {
           console.log("Image uploaded successfully", result.info);
           setFormData({
             ...formData,
-            profilePicture: result.info.secure_url, 
+            profile_picture: result.info.secure_url, 
             // Update the formData with the uploaded image URL
           });            console.log("Profile picture URL:", result.info.secure_url)
 
@@ -122,37 +151,48 @@ const ProfileView = () => {
     }
   }, []);
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
-
+    setError("");
+  
     if (!formData.name || !formData.certifications || !formData.skills || !formData.availability) {
       setError("Please fill in all the required fields.");
       return;
     }
+  
     const userId = localStorage.getItem("userId");
-    console.log(formData)
-    axios
-      .put(
-        `http://localhost:8000/api/api/caretaker-profiles/${userId}/`,
-        formData,
+  
+    console.log("Submitting data:", formData);
+  
+    try {
+      const response = await axios.put(
+        `http://localhost:8000/api/api/caretaker-profiles/user/${userId}/`,
+        {
+          ...formData,
+          profile_picture: formData.profile_picture, // Ensure profile picture is included
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         }
-      )
-      .then((response) => {
-        setCaretaker(response.data);
-        setIsEditing(false);
-        alert("Profile updated successfully!");
-      })
-      .catch((error) => {
-        console.error("There was an error updating the profile!", error);
-        setError("Failed to update profile. Please try again.");
-      });
+      );
+      // After successfully updating the profile
+      setCaretaker(prevState => ({
+        ...prevState,
+        profile_picture: response.data.profile_picture // Or the correct property from the backend response
+      }));
+
+      console.log("Profile updated successfully:", response.data);
+      setCaretaker(response.data); // Ensure caretaker state updates with new picture
+      setIsEditing(false);
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setError("Failed to update profile. Please try again.");
+    }
   };
-  console.log(formData.profilePicture);
+    console.log(formData.profile_picture);
 
   if (loading) {
     return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -242,9 +282,9 @@ const ProfileView = () => {
               >
                 Upload Profile Picture
               </button>
-              {formData.profilePicture && (
+              {formData.profile_picture && (
                 <img
-                  src={formData.profilePicture}
+                  src={formData.profile_picture}
                   alt="Profile"
                   className="w-full h-48 object-cover rounded-md"
                 />
@@ -292,11 +332,13 @@ const ProfileView = () => {
                 <p>No profile picture available</p>
               )}
             <h2 className="text-xl font-medium mb-4">{caretaker.name}</h2>
-            <p className="mb-4">Certifications: {caretaker.certifications}</p>
-            <p className="mb-4">Skills: {caretaker.skills}</p>
-            <p className="mb-4">Availability: {caretaker.availability}</p>
-            <p className="mb-4">Rate: {caretaker.rate} Ksh per {caretaker.rate_type}</p>
-            <p className="mb-4">Ratings: {caretaker.ratings} ⭐</p>
+            <p className="mb-2"><strong>Certifications:</strong> {caretaker.certifications}</p>
+            <p className="mb-2"><strong>Skills: </strong>{caretaker.skills}</p>
+            <p className="mb-2"><strong>Availability: </strong>{caretaker.availability}</p>
+            <p className="mb-2"><strong>Rate:</strong> {caretaker.rate} Ksh per {caretaker.rate_type}</p>
+            <p className="mb-4 flex"><strong>Ratings: </strong><p className="mt-1">
+              <StarRating rating={averageRating} />
+            </p></p>
             <button
               onClick={handleEdit}
               className="w-full bg-emerald-800 text-white p-3 rounded-md mb-4 hover:bg-emerald-700"

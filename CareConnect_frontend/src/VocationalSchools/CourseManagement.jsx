@@ -1,0 +1,180 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+
+const CourseManagement = () => {
+  const [courses, setCourses] = useState([]);
+  const [newCourse, setNewCourse] = useState({ title: "", description: "", duration: "", price: "" });
+  const [schoolId, setSchoolId] = useState(null);
+  const [editingCourse, setEditingCourse] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+
+  const getToken = () => localStorage.getItem("accessToken");
+
+  // Fetch school ID
+  useEffect(() => {
+    const token = getToken();
+    axios
+      .get("http://127.0.0.1:8000/api/school/", {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      })
+      .then((res) => setSchoolId(res.data.id))
+      .catch((err) => console.error("Error fetching school:", err));
+  }, []);
+
+  // Fetch courses after schoolId is set
+  useEffect(() => {
+    if (!schoolId) return; // Prevent fetching with null schoolId
+    const token = getToken();
+    axios
+      .get(`http://127.0.0.1:8000/api/courses/school/${schoolId}`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      })
+      .then((res) => setCourses(res.data))
+      .catch((err) => console.error("Error fetching courses:", err));
+  }, [schoolId]); // ✅ Only runs when schoolId is set
+
+  // Handle input change
+  const handleChange = (e) => {
+    setNewCourse({ ...newCourse, [e.target.name]: e.target.value });
+  };
+
+  // Add or Edit Course
+  const handleAddOrEditCourse = () => {
+    const token = getToken();
+    if (!schoolId) {
+      console.error("School ID is missing");
+      return;
+    }
+
+    const courseData = { ...newCourse, school: schoolId };
+
+    if (editingCourse) {
+      axios
+        .put(`http://127.0.0.1:8000/api/courses/${editingCourse.id}/`, courseData, {
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+        .then((res) => {
+          setCourses(courses.map((course) => (course.id === editingCourse.id ? res.data : course)));
+          setEditingCourse(null);
+          setShowForm(false);
+        })
+        .catch((err) => console.error("Error editing course:", err.response?.data || err.message));
+    } else {
+      axios
+        .post("http://127.0.0.1:8000/api/courses/", courseData, {
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        })
+        .then((res) => {
+          setCourses([...courses, res.data]);
+          setShowForm(false);
+        })
+        .catch((err) => console.error("Error adding course:", err.response?.data || err.message));
+    }
+  };
+ 
+  const handleToggleStatus = (courseId) => {
+    const token = getToken();
+  
+    axios
+      .patch(`http://127.0.0.1:8000/api/courses/${courseId}/toggle-status/`, {}, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      })
+      .then((res) => {
+        setCourses(
+          courses.map((course) =>
+            course.id === courseId ? { ...course, status: course.status === "open" ? "closed" : "open" } : course
+          )
+        );
+      })
+      .catch((err) => console.error("Error updating course status:", err));
+  };
+  
+  const handleEditCourse = (course) => {
+    setNewCourse({ title: course.title, description: course.description, duration: course.duration, price: course.price });
+    setEditingCourse(course);
+    setShowForm(true);
+  };
+
+  const handleDeleteCourse = (courseId) => {
+    const token = getToken();
+    axios
+      .delete(`http://127.0.0.1:8000/api/courses/${courseId}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then(() => setCourses(courses.filter((course) => course.id !== courseId)))
+      .catch((err) => console.error("Error deleting course:", err));
+  };
+
+  return (
+    <div className="p-6 bg-beige w-full min-h-screen">
+      <div className="bg-white w-3/5 mx-auto p-6 rounded-lg shadow-lg text-gray-700">
+        <h2 className="text-2xl font-semibold">Manage Courses</h2>
+
+        {showForm && (
+          <div className="my-4">
+            <span role="button" onClick={() => setShowForm(false)} className="text-xl m-2 float-right text-emerald-800 hover:text-coral">
+              ✖
+            </span>
+            <input name="title" value={newCourse.title} placeholder="Course Title" onChange={handleChange} className="border p-2 w-full mb-2" />
+            <textarea name="description" value={newCourse.description} placeholder="Course Description" onChange={handleChange} className="border p-2 w-full mb-2"></textarea>
+            <input name="duration" value={newCourse.duration} placeholder="Duration (e.g., 3 months)" onChange={handleChange} className="border p-2 w-full mb-2" />
+            <input type="number" name="price" value={newCourse.price} placeholder="Price" onChange={handleChange} className="border p-2 w-full mb-2" />
+
+            <button onClick={handleAddOrEditCourse} className="bg-emerald-800 text-white px-4 py-2 rounded">
+              {editingCourse ? "Update Course" : "Add Course"}
+            </button>
+          </div>
+        )}
+
+        {!showForm && (
+          <div className="my-4">
+            <button onClick={() => setShowForm(true)} className="bg-emerald-800 hover:bg-coral text-white px-4 py-2 rounded">
+              Add New Course
+            </button>
+          </div>
+        )}
+
+        <ul className="bg-alabaster shadow-lg rounded-md">
+          {courses.length > 0 ? (
+            courses.map((course) => (
+              <li key={course.id} className="border p-2 my-2">
+                <div className="flex justify-between">
+                  <h3 className="font-semibold text-2xl">{course.title}</h3>                <button
+                    onClick={() => handleToggleStatus(course.id)}
+                    className={`px-4 py-2 rounded ${course.status === "open" ? "bg-coral" : "bg-emerald-800"} text-white`}
+                  >
+                    {course.status === "open" ? "Close Course" : "Open Course"}
+                  </button>
+                </div>
+
+                <p className="text-lg m-2">
+                  <strong>Description:</strong> {course.description}
+                </p>
+                <p className="text-lg m-2">
+                  <strong>Duration:</strong> {course.duration}
+                </p>
+                <p className="text-lg m-2">
+                  <strong>Price:</strong> Ksh {course.price}
+                </p>
+                <p className="text-lg m-2">
+                  <strong>Status:</strong> {course.status}
+                </p>
+
+                <button onClick={() => handleEditCourse(course)} className="ml-2 bg-emerald-800 hover:bg-sage text-white w-1/5 px-4 py-2 rounded mr-2">
+                  Edit
+                </button>
+                <button onClick={() => handleDeleteCourse(course.id)} className="bg-coral text-white hover:bg-sage px-4 w-1/5 py-2 rounded">
+                  Delete
+                </button>
+              </li>
+            ))
+          ) : (
+            <p>No courses available.</p>
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default CourseManagement;

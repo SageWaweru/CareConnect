@@ -15,7 +15,7 @@ const Navbar = () => {
     <>
     <nav className="bg-white py-4 px-6 shadow-lg  ">
       <div className="flex justify-between items-center container mx-auto">
-        <Link to="/home" className="text-2xl hover:text-coral text-emeraldDark font-semibold">CareConnect</Link>
+        <Link to="/" className="text-2xl hover:text-coral text-emeraldDark font-semibold">CareConnect</Link>
 
         <div className="space-x-4">
           {/* If the user is logged in, show specific links */}
@@ -24,23 +24,41 @@ const Navbar = () => {
 
               {/* Role-specific links */}
               {user.role === 'admin' && (
-                <Link to="/home" className="hover:text-coral text-emeraldDark">Admin Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Admin Dashboard</Link>
               )}
               {user.role === 'customer' && (
                 <>
-                <Link to="/home" className="hover:text-coral text-emeraldDark">Customer Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Customer Dashboard</Link>
                 <Link to="/caretakers" className="hover:text-coral text-emeraldDark">Caretakers</Link>
+                <Link to="/createjob" className="hover:text-coral text-emeraldDark">Post Job</Link>
+                <Link to="/customer-jobs" className="hover:text-coral text-emeraldDark">My Jobs</Link>
+                <Link to="/caregiver-chats" className="hover:text-coral text-emeraldDark">Messages</Link>
+
+
                </>
               )}
               {user.role === 'caretaker' && (
                 <>
-                <Link to="/home" className="hover:text-coral text-emeraldDark">Caretaker Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Caretaker Dashboard</Link>
                 <Link to="/caretaker-profile" className="hover:text-coral text-emeraldDark">Profile</Link>
+                <Link to="/caregiver-chats" className="hover:text-coral text-emeraldDark">Messages</Link>
+                <Link to="/applyjob" className="hover:text-coral text-emeraldDark">Jobs</Link>
+                <Link to="/VocationalSchool" className="hover:text-coral text-emeraldDark">Vocational Schools</Link>
+
 
                 </>
               )}
               {user.role === 'vocational_school' && (
-                <Link to="/home" className="hover:text-coral text-emeraldDark">Vocational School Dashboard</Link>
+                <>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Vocational School Dashboard</Link>
+                <Link to="/school" className="hover:text-coral text-emeraldDark">Profile</Link>
+                <Link to="/courses" className="hover:text-coral text-emeraldDark">Courses</Link>
+                <Link to="/enrollments" className="hover:text-coral text-emeraldDark">Enrollments</Link>
+
+                {/* <Link to="/schools/:id" className="hover:text-coral text-emeraldDark">School Profile</Link>
+                <Link to="/courses/add" className="hover:text-coral text-emeraldDark">Add Courses</Link>
+                <Link to="/schools/manage/:id?" className="hover:text-coral text-emeraldDark">Manage School</Link> */}
+                </>
               )}
 
               {/* Logout button */}
@@ -48,7 +66,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/home"  className="hover:text-coral text-emeraldDark">Home</Link>
+              <Link to="/"  className="hover:text-coral text-emeraldDark">Home</Link>
               <Link to="/login" className="hover:text-coral text-emeraldDark">Login</Link>
               <Link to="/register" className="hover:text-coral text-emeraldDark">Register</Link>
             </>

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const { login, message, user } = useContext(AuthContext);
+  const { login, user } = useContext(AuthContext);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
@@ -19,7 +19,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(formData);
-    navigate('/home');
+    navigate('/');
   };
 
   return (
@@ -48,7 +48,6 @@ const Login = () => {
       </button>
     </form>
     {isAdmin && <p className="mt-6 text-center text-emeraldDark text-lg font-semibold">Welcome, Admin!</p>}
-    {message && <p className="mt-4 text-center text-coral text-lg">{message}</p>}
   </div>
   
   );

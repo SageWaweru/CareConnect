@@ -70,11 +70,12 @@ const Profile = () => {
 
     document.body.appendChild(script);
   }, []);
+
   const handleImageUpload = () => {
     window.cloudinary.openUploadWidget(
       {
-        cloud_name: "dpb7i0th4", // Replace with your Cloudinary cloud name
-        upload_preset: "Profile-Pictures", // Replace with your upload preset name
+        cloud_name: "dpb7i0th4",
+        upload_preset: "Profile-Pictures",
         sources: ["local", "url", "camera"],
         multiple: false,
         cropping: true,
@@ -88,7 +89,10 @@ const Profile = () => {
         }
         if (result.event === "success") {
           console.log("Image uploaded successfully", result.info);
-          setProfilePicture(result.info.secure_url); // Store the URL of the uploaded image
+          
+          // Use the Cloudinary URL directly
+          const imageUrl = result.info.secure_url; // This is the URL of the uploaded image
+          setProfilePicture(imageUrl); // Store the URL, not the file
         }
       }
     );
@@ -107,18 +111,22 @@ const Profile = () => {
       setError("User ID not found. Please log in again.");
       return;
     }
-    const caretakerData = {
-      name,
-      certifications,
-      skills,
-      availability,
-      rate: parseFloat(rate) || 0.0,
-      rate_type: rateType,
-      profile_picture: profilePicture,
-      ratings: parseFloat(ratings) || 0.0,
-      number_of_ratings: 0, 
-      user:userId
-    };
+  
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("certifications", certifications);
+    formData.append("skills", skills);
+    formData.append("availability", availability);
+    formData.append("rate", parseFloat(rate) || 0.0);
+    formData.append("rate_type", rateType);
+    formData.append("ratings", parseFloat(ratings) || 0.0);
+    formData.append("number_of_ratings", 0);
+    formData.append("user", userId);
+  
+    // Use the image URL, not the file
+    if (profilePicture) {
+      formData.append("profile_picture", profilePicture);
+    }
   
     const accessToken = localStorage.getItem("accessToken");
   
@@ -128,9 +136,10 @@ const Profile = () => {
     }
   
     axios
-      .post("http://localhost:8000/api/api/caretaker-profiles/", caretakerData, {
+      .post("http://localhost:8000/api/api/caretaker-profiles/", formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
         },
       })
       .then((response) => {
@@ -147,7 +156,7 @@ const Profile = () => {
         setError(error.response?.data?.detail || "Failed to create caretaker profile.");
       });
   };
-    
+        
   if (role !== "caretaker") {
     return (
       <div className="flex items-center justify-center min-h-screen">

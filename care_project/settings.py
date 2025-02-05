@@ -42,12 +42,25 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
+    'cloudinary',
+    'channels',
+    'cloudinary_storage',
     'corsheaders',
     'care_app'
 ]
+
+CHANNEL_LAYERS = { "default":
+                   { "BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": { "hosts": [("127.0.0.1", 6379)], }, }, }
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+    }
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -59,7 +72,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
-
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = [
     'Authorization',
@@ -96,6 +108,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'care_project.wsgi.application'
+ASGI_APPLICATION = 'care_project.asgi.application'
 
 
 # Database

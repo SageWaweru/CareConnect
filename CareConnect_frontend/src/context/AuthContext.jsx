@@ -5,7 +5,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState('');
 
   const login = async (formData) => {
     try {
@@ -43,10 +42,10 @@ export const AuthProvider = ({ children }) => {
 
       setUser(userData); 
       localStorage.setItem('userId', currentUser.id); 
-      setMessage('Login successful');
+      alert('Login successful');
     } catch (error) {
       console.error('Login failed:', error);
-      setMessage('Login failed. Please check your credentials.');
+      alert('Login failed. Please check your credentials.');
     }
   };
 
@@ -55,11 +54,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
     setUser(null);
-    setMessage('');
+    alert('You have been logged out');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, message }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
