@@ -186,29 +186,8 @@ const Home = () => {
                
               </div>
             </div>
-            <div className="container mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-[#B0BC98] text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Posted Jobs</h3>
-                <p className="text-3xl font-bold">50</p>
-              </div>
-
-              <div className="bg-[#E09891] text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Job Applications</h3>
-                <p className="text-3xl font-bold">45</p>
-              </div>
-
-              <div className="bg-alabaster text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Payments This Week</h3>
-                <p className="text-3xl font-bold">Ksh 5000</p>
-              </div>
-
-              <div className="bg-emerald-800 text-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">New Messages</h3>
-                <p className="text-3xl font-bold">3</p>
-              </div>
             </div>
           </div>
-        </div>
       ) : user.role === "caretaker" ? (
         <div className="w-full ">
           <div className="min-h-screen p-6">
@@ -340,27 +319,6 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="container mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-[#B0BC98] text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Total Bookings</h3>
-                <p className="text-3xl font-bold">50</p>
-              </div>
-
-              <div className="bg-[#E09891] text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Applied Jobs</h3>
-                <p className="text-3xl font-bold">45</p>
-              </div>
-
-              <div className="bg-alabaster text-gray-700 p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">Earnings This Week</h3>
-                <p className="text-3xl font-bold">Ksh 5000</p>
-              </div>
-
-              <div className="bg-emerald-800 text-white p-6 rounded-lg shadow-lg">
-                <h3 className="text-lg font-semibold">New Messages</h3>
-                <p className="text-3xl font-bold">3</p>
-              </div>
-            </div>
           </div>
         </div>
       ) : user.role === "vocational_school" ? (

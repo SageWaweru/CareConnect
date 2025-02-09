@@ -51,7 +51,8 @@ const CaretakerReviews = () => {
                     {reviews.map((review) => (
                         <li key={review.id} className="p-4 bg-stone-50
                          border rounded-md shadow-md">
-                            <h3 className="font-semibold flex text-lg">Rating:<p className='mt-1'>
+                            <h3 className="font-semibold flex text-lg">{review.reviewer_name}</h3>
+                            <h3 className="font-semibold flex ">Rating:<p className='mt-1'>
                                 <StarRating  rating={review.rating} />
                             </p></h3>
                             <p>{review.review_text}</p>

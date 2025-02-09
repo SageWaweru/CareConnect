@@ -7,6 +7,12 @@ const CaretakerProfiles = () => {
   const [profiles, setProfiles] = useState([]);
   const [ratings, setRatings] = useState({}); // Store ratings per caretaker
   const navigate = useNavigate();
+  const [filteredProfiles, setFilteredProfiles] = useState([]);
+  const [filters, setFilters] = useState({
+    availability: "",
+    skill: "",
+    minRating: "",
+  });
 
   const handleReviewClick = (profileId) => {
     navigate(`/review/${profileId}`);
@@ -17,6 +23,7 @@ const CaretakerProfiles = () => {
       .get("http://localhost:8000/api/api/caretaker-profiles/")
       .then((response) => {
         setProfiles(response.data);
+        setFilteredProfiles(response.data);
       })
       .catch((error) => {
         console.error("There was an error fetching the profiles!", error);
@@ -50,57 +57,101 @@ const CaretakerProfiles = () => {
     fetchReviews();
   }, [profiles]); // Fetch ratings when profiles are loaded
 
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({ ...filters, [name]: value });
+  };
+
+  /*** Apply Filters ***/
+  useEffect(() => {
+    let filtered = profiles;
+
+    if (filters.availability) {
+      filtered = filtered.filter((profile) => profile.availability === filters.availability);
+    }
+
+    if (filters.skill) {
+      filtered = filtered.filter((profile) => profile.skills?.includes(filters.skill));
+    }
+
+    if (filters.minRating) {
+      filtered = filtered.filter((profile) => (ratings[profile.id] || 0) >= parseFloat(filters.minRating));
+    }
+
+    setFilteredProfiles(filtered);
+  }, [filters, profiles, ratings]);
+
   return (
     <div className="min-h-screen bg-beige py-10 px-4">
       <h2 className="text-4xl font-bold text-gray-700 text-center mb-8">
         Caretaker Profiles
       </h2>
-      {profiles.length > 0 ? (
+       {/* Filter Section */}
+       <div className="flex float flex-wrap gap-4 mb-6 justify-left">
+        <h3 className="text-2xl font-bold text-gray-700">Filter Caretakers by:</h3>
+        <select name="availability" className="p-2 border rounded" onChange={handleFilterChange}>
+          <option value=""> Availability(All)</option>
+          <option value="Full-time">Full-time</option>
+          <option value="Part-time">Part-time</option>
+          <option value="Weekends Only">Weekends Only</option>
+          <option value="Flexible Hours">Flexible Hours</option>
+
+        </select>
+
+        <select name="skill" className="p-2 border rounded" onChange={handleFilterChange}>
+          <option value=""> Skill(All)</option>
+          <option value="Nursing">Nursing</option>
+          <option value="Elderly Care">Elderly Care</option>
+          <option value="Child Care">Child Care</option>
+          <option value="Child Care">Sign Language</option>
+          <option value="Child Care">First Aide</option>
+
+        </select>
+
+        <select name="minRating" className="p-2 border rounded" onChange={handleFilterChange}>
+          <option value=""> Min Rating(All)</option>
+          <option value="1">1 Star</option>
+          <option value="2">2 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="5">5 Stars</option>
+        </select>
+      </div>
+
+      {filteredProfiles.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {profiles.map((profile) => (
+          {filteredProfiles.map((profile) => (
             <div
               key={profile.id}
               className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition border border-sage"
             >
               <img
                 src={profile.profile_picture}
-                alt="Profile Picture"
+                alt="Profile"
                 className="w-40 h-40 object-cover rounded-full mb-4"
               />
-              <h3 className="text-xl font-semibold text-emerald-800 mb-3">
-                {profile.name}
-              </h3>
+              <h3 className="text-xl font-semibold text-emerald-800 mb-3">{profile.name}</h3>
               <p className="text-gray-700 mb-2">
-                <strong className="text-emerald-700">Availability:</strong>{" "}
-                {profile.availability}
+                <strong className="text-emerald-700">Availability:</strong> {profile.availability}
               </p>
               <p className="text-gray-700 mb-2">
-                <strong className="text-emerald-700">Rate:</strong> Ksh {profile.rate} per{" "}
-                {profile.rate_type}
+                <strong className="text-emerald-700">Rate:</strong> Ksh {profile.rate} per {profile.rate_type}
               </p>
               <p className="text-gray-700 flex">
-                <strong className="text-emerald-700">Ratings:</strong>{" "}
+                <strong className="text-emerald-700">Ratings:</strong> 
                 <StarRating rating={ratings[profile.id] || 0} />
               </p>
               <button
-                className="mt-4 px-4 py-2 text-white bg-coral hover:bg-[#C0706A] hover:text-white transition rounded-lg"
+                className="mt-4 px-4 py-2 text-white bg-coral hover:bg-[#C0706A] transition rounded-lg"
                 onClick={() => navigate(`/caretaker/${profile.id}`)}
               >
                 View Profile
-              </button>
-              <button
-                onClick={() => handleReviewClick(profile.id)}
-                className="mt-4 px-4 py-2 ml-2 text-white bg-coral hover:bg-[#C0706A] hover:text-white transition rounded-lg"
-              >
-                Rate Caretaker
               </button>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-600 mt-10">
-          No profiles available at the moment.
-        </p>
+        <p className="text-center text-gray-600 mt-10">No profiles match the selected filters.</p>
       )}
     </div>
   );

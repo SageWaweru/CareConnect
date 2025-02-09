@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -18,6 +19,7 @@ from rest_framework import viewsets, permissions, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import NotFound
 from django.db.models import Max
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -711,3 +713,239 @@ class ApproveCertificationView(APIView):
         return Response({"message": "Certification approved"}, status=status.HTTP_200_OK)
 
 
+#Admin views
+
+class AdminUserListView(APIView):
+    def get(self, request):
+        users = CustomUser.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserSerializer(user, data=request.data, partial=True)  # partial=True for partial updates
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user.delete()
+        return Response({"detail": "User deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+
+class AdminUserDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            user = CustomUser.objects.get(pk=pk)
+        except CustomUser.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AdminCaretakerProfileListCreateView(APIView):
+    def get(self, request):
+        profiles = CaretakerProfile.objects.all()
+        serializer = CaretakerProfileSerializer(profiles, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = CaretakerProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            profile = serializer.save()
+            return Response(CaretakerProfileSerializer(profile).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminCaretakerProfileDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            profile = CaretakerProfile.objects.get(pk=pk)
+        except CaretakerProfile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CaretakerProfileSerializer(profile)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        try:
+            profile = CaretakerProfile.objects.get(pk=pk)
+        except CaretakerProfile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = CaretakerProfileSerializer(profile, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            profile = CaretakerProfile.objects.get(pk=pk)
+        except CaretakerProfile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        profile.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AdminJobPostListCreateAPIView(APIView):
+    def get(self, request):
+        jobs = JobPost.objects.all()
+        serializer = JobPostSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = JobPostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)  # Add this if `JobPost` has a user field
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class JobPostStatusUpdateAPIView(APIView):
+    def patch(self, request, pk=None):
+        try:
+            job = JobPost.objects.get(id=pk)
+        except JobPost.DoesNotExist:
+            return Response({"detail": "Job post not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get the new status from the request data
+        new_status = request.data.get("status")
+
+        if not new_status:
+            return Response({"detail": "Status is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the job post status
+        job.status = new_status
+        job.save()
+
+        # Return the updated job post data
+        return Response(JobPostSerializer(job).data, status=status.HTTP_200_OK)
+
+class JobPostDetailView(APIView):
+    def get(self, request, pk):
+        try:
+            job = JobPost.objects.get(pk=pk)
+        except JobPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = JobPostSerializer(job)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        try:
+            job = JobPost.objects.get(pk=pk)
+        except JobPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = JobPostSerializer(job, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            job = JobPost.objects.get(pk=pk)
+        except JobPost.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        job.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AdminJobApplicationListCreateAPIView(APIView):
+    def get(self, request):
+        applications = JobApplication.objects.all()
+        serializer = JobApplicationSerializer(applications, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = JobApplicationSerializer(data=request.data)
+        if serializer.is_valid():
+            application = serializer.save()
+            return Response(JobApplicationSerializer(application).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminJobApplicationDetailUpdateAPIView(APIView):
+    def get(self, request, job_id):
+            applications = JobApplication.objects.filter(job__id=job_id)  # Filter by job ID
+            serializer = JobApplicationSerializer(applications, many=True)
+            return Response(serializer.data)
+    
+    def put(self, request, pk):
+        try:
+            application = JobApplication.objects.get(pk=pk)
+        except JobApplication.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = JobApplicationSerializer(application, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        try:
+            application = JobApplication.objects.get(pk=pk)
+        except JobApplication.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        application.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AdminReviewListView(APIView):
+    def get(self, request, *args, **kwargs):
+        caretaker_id = request.query_params.get('caretaker_id', None)
+        
+        if caretaker_id:
+            # If caretaker_id is provided, filter reviews by the specific caretaker
+            reviews = Review.objects.filter(caretaker_id=caretaker_id)
+        else:
+            # If no caretaker_id is provided, fetch all reviews
+            reviews = Review.objects.all()
+        
+        # Serialize the reviews
+        serializer = ReviewSerializer(reviews, many=True)
+        
+        # Return the serialized data in the response
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AdminSchoolListView(APIView):
+    def get(self, request):
+        schools = VocationalSchool.objects.all()
+        serializer = VocationalSchoolSerializer(schools, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AdminEnrollmentListView(APIView):
+    def get(self, request):
+        enrollments = Enrollment.objects.all()
+        serializer = EnrollmentSerializer(enrollments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

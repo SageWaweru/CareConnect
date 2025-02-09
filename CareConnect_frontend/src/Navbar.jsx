@@ -24,7 +24,14 @@ const Navbar = () => {
 
               {/* Role-specific links */}
               {user.role === 'admin' && (
-                <Link to="/" className="hover:text-coral text-emeraldDark">Admin Dashboard</Link>
+                <>
+                <Link to="/admin" className="hover:text-coral text-emeraldDark">Dashboard</Link>
+                <Link to="/admin/users" className="hover:text-coral text-emeraldDark">Users</Link>
+                <Link to="/admin/jobs" className="hover:text-coral text-emeraldDark">Jobs</Link>
+                <Link to="/admin/schools" className="hover:text-coral text-emeraldDark">Schools</Link>
+                <Link to="/admin/reviews" className="hover:text-coral text-emeraldDark">Reviews</Link>
+                </>
+        
               )}
               {user.role === 'customer' && (
                 <>

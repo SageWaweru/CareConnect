@@ -21,6 +21,12 @@ import CourseManagement from './VocationalSchools/CourseManagement';
 import SchoolList from './VocationalSchools/SchoolsList';
 import CoursesPage from './VocationalSchools/CoursesPage';
 import Enrollments from './VocationalSchools/Enrollments';
+import Users from './admin/Users';
+import AdminDashboard from './admin/AdminDashboard';
+import Jobs from './admin/Jobs';
+import Reviews from './admin/Reviews';
+import Schools from './admin/Schools';
+import Applications from './admin/Applications';
 
 function App() {
 
@@ -48,6 +54,13 @@ function App() {
       <Route path="/VocationalSchool" element={<SchoolList />} />
       <Route path="/schools/:schoolId/courses" element={<CoursesPage />}/>
       <Route path="/enrollments" element={<Enrollments />}/>
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/users" element={<Users />} />
+      <Route path="/admin/jobs" element={<Jobs />} />
+      <Route path="/admin/schools" element={<Schools />} />
+      <Route path="/admin/reviews" element={<Reviews />} />
+      <Route path="/applications/:id" element={<Applications />}/>
+
 
 
 

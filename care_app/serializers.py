@@ -53,9 +53,11 @@ class CaretakerProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class ReviewSerializer(serializers.ModelSerializer):
+    caretaker_name = serializers.CharField(source="caretaker.name", read_only=True)
+    reviewer_name = serializers.CharField(source="user.username", read_only=True)
     class Meta:
         model = Review
-        fields = ['id','user', 'rating', 'review_text', 'created_at']
+        fields = ['id','user','caretaker', 'reviewer_name', 'caretaker_name', 'rating', 'review_text', 'created_at']
         
     def validate_rating(self, value):
         if value < 1 or value > 5:
@@ -109,10 +111,14 @@ class JobApplicationSerializer(serializers.ModelSerializer):
     caretaker = serializers.StringRelatedField(read_only=True)
     job = serializers.PrimaryKeyRelatedField(queryset=JobPost.objects.all())  
     caretaker_user_id = serializers.IntegerField(source='caretaker.id', read_only=True)
-    
+    job_title = serializers.SerializerMethodField()  
+
     class Meta:
         model = JobApplication
         fields = '__all__'
+
+    def get_job_title(self, obj):
+        return obj.job.title if obj.job else None
 
     def validate(self, data):
         job = data.get('job')
@@ -122,9 +128,11 @@ class JobApplicationSerializer(serializers.ModelSerializer):
 
 
 class VocationalSchoolSerializer(serializers.ModelSerializer):
+    manager_name = serializers.CharField(source="manager.username", read_only=True)
     class Meta:
         model = VocationalSchool
         fields = '__all__'
+        read_only_fields = ["manager"]
 
     def create(self, validated_data):
         request = self.context.get("request")
@@ -154,3 +162,4 @@ class CertificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Certification
         fields = '__all__'
+

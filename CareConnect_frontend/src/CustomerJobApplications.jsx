@@ -47,10 +47,6 @@ function CustomerJobApplications() {
     fetchApplicationsAndJobs();
   }, []);
 
-  const getJobById = (jobId) => {
-    return jobs.find((job) => job.id === jobId);
-  };
-
   const handleEditClick = (jobId) => {
     const job = jobs.find(job => job.id === jobId);
     setEditingJobId(jobId);
@@ -159,12 +155,11 @@ function CustomerJobApplications() {
             <p className="text-center text-sage">No applications for your jobs yet.</p>
           ) : (
             applications.map((application) => {
-              const job = getJobById(application.job);
               console.log("Application ID:", application.id, "Status:", application.status);
 
               return (
                 <div key={application.id} className="mb-4 p-4 border border-gray-300 bg-alabaster rounded-md shadow-sm">
-                  <h3 className="text-xl font-semibold text-emerald-dark">Job: {job ? job.title : "Job not found"}</h3>
+                  <h3 className="text-xl font-semibold text-emerald-dark">Job: {application.job_title}</h3>
                   <p className="mt-2 font-semibold">Applicant: {application.caretaker}</p>
                   <p className="mt-2 font-semibold">Status: {application.status}</p>
                   {application.status === "Pending" && (

@@ -9,17 +9,22 @@ const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user) {
-      console.log('Logged in user:', user);  
-      setIsAdmin(user.role === 'admin' || user.is_superuser);
-    }
-  }, [user]);
+    useEffect(() => {
+      if (user) {
+        setIsAdmin(user.role === 'admin' || user.is_superuser);
+        
+        if (user.role === 'admin' || user.is_superuser) {
+          navigate('/admin');
+        } else {
+          navigate('/');
+        }
+      }
+    }, [user, navigate]); // Runs when `user` updates
+  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await login(formData);
-    navigate('/');
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      await login(formData);
   };
 
   return (

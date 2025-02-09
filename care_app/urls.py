@@ -25,6 +25,18 @@ from . views import (
     VocationalSchoolListView,
     SchoolCoursesView,
     SchoolEnrollmentsView,
+    AdminCaretakerProfileDetailView,
+    AdminCaretakerProfileListCreateView,
+    AdminJobApplicationDetailUpdateAPIView,
+    AdminJobApplicationListCreateAPIView,
+    AdminJobPostListCreateAPIView,
+    AdminUserDetailView,
+    AdminUserListView,
+    JobPostDetailView,
+    AdminReviewListView,
+    JobPostStatusUpdateAPIView,
+    AdminEnrollmentListView,
+    AdminSchoolListView,
     # caregiver_chat_detail,
     # caregiver_chats,
 )
@@ -81,6 +93,30 @@ urlpatterns = [
     path("enrollments/school/<int:school_id>/", SchoolEnrollmentsView.as_view(), name="school-enrollments"),
     path("approve-enrollment/<int:enrollment_id>/", ApproveEnrollmentView.as_view(), name="approve-enrollment"),
     path("approve-certification/<int:certification_id>/", ApproveCertificationView.as_view(), name="approve-certification"),
+
+     # Admin URLs
+    path('admin/users/', AdminUserListView.as_view(), name='admin-user-list'),
+    path('admin/users/<int:pk>/', AdminUserListView.as_view(), name='admin-user'),
+    path('admin/users/<int:pk>/toggle-status/', AdminUserListView.as_view(), name='admin-user-status'),
+    path('admin/users/detail/<int:pk>/', AdminUserDetailView.as_view(), name='admin-user-detail'),
+
+    
+    path('admin/caretaker-profiles/', AdminCaretakerProfileListCreateView.as_view(), name='admin-caretaker-profile-list-create'),
+    path('admin/caretaker-profiles/<int:pk>/', AdminCaretakerProfileDetailView.as_view(), name='admin-caretaker-profile-detail'),
+
+    path('admin/reviews/', AdminReviewListView.as_view(), name='caretaker-reviews'),
+
+    path('admin/job-posts/', AdminJobPostListCreateAPIView.as_view(), name='admin-job-post-list-create'),
+    path('admin/job-posts/<int:pk>/', JobPostDetailView.as_view(), name='admin-job-post-detail'),
+    path('admin/jobs/<int:pk>/', JobPostStatusUpdateAPIView.as_view(), name='admin-job-detail'),
+
+    path('admin/job-applications/', AdminJobApplicationListCreateAPIView.as_view(), name='admin-job-application-list-create'),
+    path('admin/job-applications/<int:job_id>/', AdminJobApplicationDetailUpdateAPIView.as_view(), name='admin-job-application-detail-update'),
+    path('admin/job-applications/delete/<int:pk>/', AdminJobApplicationDetailUpdateAPIView.as_view(), name='admin-job-application-delete'),
+
+    path('admin/schools/', AdminSchoolListView.as_view(), name='admin-schools'),
+    path('admin/enrollments/', AdminEnrollmentListView.as_view(), name='admin-enrollments'),
+
     # Include the router URLs for caretaker profiles
     path('api/', include(router.urls)),
   
