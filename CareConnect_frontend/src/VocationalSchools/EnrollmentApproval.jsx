@@ -5,7 +5,7 @@ const EnrollmentApproval = () => {
   const [enrollments, setEnrollments] = useState([]);
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/enrollments/") // Update API endpoint if needed
+    axios.get("http://127.0.0.1:8000/api/enrollments/") 
       .then(res => setEnrollments(res.data))
       .catch(err => console.error(err));
   }, []);

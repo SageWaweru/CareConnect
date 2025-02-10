@@ -11,7 +11,7 @@ const SchoolProfile = () => {
     description: "",
     location: "",
   });
-  const [preview, setPreview] = useState(null); // 🔹 Image preview
+  const [preview, setPreview] = useState(null); 
 
   const token = localStorage.getItem("accessToken");
 
@@ -26,7 +26,7 @@ const SchoolProfile = () => {
           name: res.data.name || "",
           location: res.data.location || "",
           description: res.data.description || "",
-          logo: null, // Keep this null, so we don't overwrite the existing image
+          logo: null, 
         });
       })
       .catch((err) => {
@@ -43,7 +43,7 @@ const SchoolProfile = () => {
       const file = e.target.files[0];
       if (file) {
         setFormData({ ...formData, logo: file });
-        setPreview(URL.createObjectURL(file)); // ✅ Show preview before upload
+        setPreview(URL.createObjectURL(file)); 
       }
     } else {
       setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -67,7 +67,7 @@ const SchoolProfile = () => {
         },
       });
   
-      setSchool(res.data); // ✅ Set the new profile data
+      setSchool(res.data); 
       setProfileNotFound(false);
       setIsEditing(false);
       console.log("Created new school profile:", res.data);
@@ -85,7 +85,7 @@ const SchoolProfile = () => {
       formDataToSend.append("location", formData.location);
       formDataToSend.append("description", formData.description);
       if (formData.logo instanceof File) {
-        formDataToSend.append("logo", formData.logo); // ✅ Only send new image
+        formDataToSend.append("logo", formData.logo); 
       }
   
       const res = await axios.patch("http://127.0.0.1:8000/api/school/", formDataToSend, {
@@ -95,17 +95,16 @@ const SchoolProfile = () => {
         },
       });
   
-      // ✅ Ensure updated school data is set, including new image
       setSchool((prev) => ({
         ...prev,
-        ...res.data, // Merge updated fields
-        logo: res.data.logo || prev.logo, // Ensure logo is updated
+        ...res.data, 
+        logo: res.data.logo || prev.logo, 
       }));
   
       setIsEditing(false);
       console.log("Updated school profile:", res.data);
 
-      setPreview(null); // Reset preview after update
+      setPreview(null); 
     } catch (err) {
       console.error("Error updating school profile:", err.response?.data || err.message);
     }

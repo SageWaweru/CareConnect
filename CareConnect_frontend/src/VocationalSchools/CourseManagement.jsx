@@ -10,7 +10,6 @@ const CourseManagement = () => {
 
   const getToken = () => localStorage.getItem("accessToken");
 
-  // Fetch school ID
   useEffect(() => {
     const token = getToken();
     axios
@@ -21,9 +20,8 @@ const CourseManagement = () => {
       .catch((err) => console.error("Error fetching school:", err));
   }, []);
 
-  // Fetch courses after schoolId is set
   useEffect(() => {
-    if (!schoolId) return; // Prevent fetching with null schoolId
+    if (!schoolId) return; 
     const token = getToken();
     axios
       .get(`http://127.0.0.1:8000/api/courses/school/${schoolId}`, {
@@ -31,14 +29,12 @@ const CourseManagement = () => {
       })
       .then((res) => setCourses(res.data))
       .catch((err) => console.error("Error fetching courses:", err));
-  }, [schoolId]); // ✅ Only runs when schoolId is set
+  }, [schoolId]); 
 
-  // Handle input change
   const handleChange = (e) => {
     setNewCourse({ ...newCourse, [e.target.name]: e.target.value });
   };
 
-  // Add or Edit Course
   const handleAddOrEditCourse = () => {
     const token = getToken();
     if (!schoolId) {
@@ -107,7 +103,7 @@ const CourseManagement = () => {
 
   return (
     <div className="p-6 bg-beige w-full min-h-screen">
-      <div className="bg-white w-3/5 mx-auto p-6 rounded-lg shadow-lg text-gray-700">
+      <div className="bg-white w-full mx-auto p-6 rounded-lg shadow-lg text-gray-700">
         <h2 className="text-2xl font-semibold">Manage Courses</h2>
 
         {showForm && (
@@ -134,44 +130,53 @@ const CourseManagement = () => {
           </div>
         )}
 
-        <ul className="bg-alabaster shadow-lg rounded-md">
-          {courses.length > 0 ? (
-            courses.map((course) => (
-              <li key={course.id} className="border p-2 my-2">
-                <div className="flex justify-between">
-                  <h3 className="font-semibold text-2xl">{course.title}</h3>                <button
-                    onClick={() => handleToggleStatus(course.id)}
-                    className={`px-4 py-2 rounded ${course.status === "open" ? "bg-coral" : "bg-emerald-800"} text-white`}
-                  >
-                    {course.status === "open" ? "Close Course" : "Open Course"}
-                  </button>
-                </div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+  {courses.length > 0 ? (
+    courses.map((course) => (
+      <div key={course.id} className="border p-4 rounded-lg shadow-md bg-alabaster">
+        <div className="flex justify-between items-center">
+          <h3 className="font-semibold text-xl">{course.title}</h3>
+          <button
+            onClick={() => handleToggleStatus(course.id)}
+            className={`px-4 py-2 rounded ${course.status === "open" ? "bg-coral hover:bg-emerald-800" : "bg-emerald-800 hover:bg-coral"} text-white`}
+          >
+            {course.status === "open" ? "Close Course" : "Open Course"}
+          </button>
+        </div>
 
-                <p className="text-lg m-2">
-                  <strong>Description:</strong> {course.description}
-                </p>
-                <p className="text-lg m-2">
-                  <strong>Duration:</strong> {course.duration}
-                </p>
-                <p className="text-lg m-2">
-                  <strong>Price:</strong> Ksh {course.price}
-                </p>
-                <p className="text-lg m-2">
-                  <strong>Status:</strong> {course.status}
-                </p>
+        <p className="text-lg mt-2">
+          <strong>Description:</strong> {course.description}
+        </p>
+        <p className="text-lg mt-2">
+          <strong>Duration:</strong> {course.duration}
+        </p>
+        <p className="text-lg mt-2">
+          <strong>Price:</strong> Ksh {course.price}
+        </p>
+        <p className="text-lg mt-2">
+          <strong>Status:</strong> {course.status}
+        </p>
 
-                <button onClick={() => handleEditCourse(course)} className="ml-2 bg-emerald-800 hover:bg-sage text-white w-1/5 px-4 py-2 rounded mr-2">
-                  Edit
-                </button>
-                <button onClick={() => handleDeleteCourse(course.id)} className="bg-coral text-white hover:bg-sage px-4 w-1/5 py-2 rounded">
-                  Delete
-                </button>
-              </li>
-            ))
-          ) : (
-            <p>No courses available.</p>
-          )}
-        </ul>
+        <div className="mt-4 flex">
+          <button
+            onClick={() => handleEditCourse(course)}
+            className="bg-emerald-800 hover:bg-coral w-2/6 mr-2 text-white px-4 py-2 rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => handleDeleteCourse(course.id)}
+            className="bg-coral text-white hover:bg-emerald-800 w-2/6  px-4 py-2 rounded"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="col-span-2 text-center">No courses available.</p>
+  )}
+</div>
       </div>
     </div>
   );

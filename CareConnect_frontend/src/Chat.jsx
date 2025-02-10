@@ -3,8 +3,8 @@ const Chat = ({ customerId, caregiverId }) => {
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState("");
-  const [isSocketOpen, setIsSocketOpen] = useState(false);  // Track WebSocket open state
-  const [socketError, setSocketError] = useState(null);  // Track socket error
+  const [isSocketOpen, setIsSocketOpen] = useState(false);  
+  const [socketError, setSocketError] = useState(null);  
 
   useEffect(() => {
     if (caregiverId && customerId) {
@@ -20,12 +20,11 @@ const Chat = ({ customerId, caregiverId }) => {
         ws.onmessage = (event) => {
           const data = JSON.parse(event.data);
           setMessages((prev) => {
-            // Check if the message already exists in the state
             const isDuplicate = prev.some((msg) => msg.content === data.content && msg.timestamp === data.timestamp);
             if (isDuplicate) {
-              return prev; // Don't add the duplicate message
+              return prev; 
             }
-            return [...prev, data]; // Add new message
+            return [...prev, data]; 
           });
         };
         
@@ -38,7 +37,7 @@ const Chat = ({ customerId, caregiverId }) => {
         ws.onclose = () => {
           console.log("WebSocket disconnected");
           setIsSocketOpen(false);
-          setTimeout(connectWebSocket, 5000);  // Reconnect after 5 seconds
+          setTimeout(connectWebSocket, 5000);  
         };
 
         setSocket(ws);
@@ -61,21 +60,20 @@ const Chat = ({ customerId, caregiverId }) => {
         sender: customerId,
         receiver: caregiverId,
       };
-      socket.send(JSON.stringify(msgData));  // Send message through WebSocket
-      // Update UI immediately but don't add again when received from server
+      socket.send(JSON.stringify(msgData));  
       console.log('customerId:', customerId);
 console.log('msgData.sender:', msgData.sender);
 
 setMessages((prev) => {
-  console.log('Previous messages:', prev); // Log previous state
+  console.log('Previous messages:', prev); 
   return [
     ...prev,
     {
       ...msgData,
-      sender: msgData.sender === customerId ? "You" : "Caregiver",  // Correct sender label
+      sender: msgData.sender === customerId ? "You" : "Caregiver",  
     }
   ];
-});      setMessage(""); // Clear the message input
+});      setMessage(""); 
     } else {
       console.error("WebSocket is not open or message is empty");
     }
@@ -93,7 +91,7 @@ setMessages((prev) => {
   <p
     key={index}
     style={{
-      textAlign: msg.sender === "You" ? "right" : "left",  // Display based on sender
+      textAlign: msg.sender === "You" ? "right" : "left",  
       backgroundColor: msg.sender === "You" ? "#2D6A4F" : "#FFFFFF",
       padding: "8px",
       color: "white",

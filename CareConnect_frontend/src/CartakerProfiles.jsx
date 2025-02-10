@@ -5,7 +5,7 @@ import StarRating from "./StarRating";
 
 const CaretakerProfiles = () => {
   const [profiles, setProfiles] = useState([]);
-  const [ratings, setRatings] = useState({}); // Store ratings per caretaker
+  const [ratings, setRatings] = useState({}); 
   const navigate = useNavigate();
   const [filteredProfiles, setFilteredProfiles] = useState([]);
   const [filters, setFilters] = useState({
@@ -13,10 +13,6 @@ const CaretakerProfiles = () => {
     skill: "",
     minRating: "",
   });
-
-  const handleReviewClick = (profileId) => {
-    navigate(`/review/${profileId}`);
-  };
 
   useEffect(() => {
     axios
@@ -55,14 +51,13 @@ const CaretakerProfiles = () => {
     };
 
     fetchReviews();
-  }, [profiles]); // Fetch ratings when profiles are loaded
+  }, [profiles]); 
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
 
-  /*** Apply Filters ***/
   useEffect(() => {
     let filtered = profiles;
 
@@ -86,7 +81,6 @@ const CaretakerProfiles = () => {
       <h2 className="text-4xl font-bold text-gray-700 text-center mb-8">
         Caretaker Profiles
       </h2>
-       {/* Filter Section */}
        <div className="flex float flex-wrap gap-4 mb-6 justify-left">
         <h3 className="text-2xl font-bold text-gray-700">Filter Caretakers by:</h3>
         <select name="availability" className="p-2 border rounded" onChange={handleFilterChange}>

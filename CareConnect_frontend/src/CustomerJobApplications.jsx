@@ -17,7 +17,7 @@ function CustomerJobApplications() {
     duration: '',
     status: '',
   });
-  const [chatOpen, setChatOpen] = useState({});  // Change to an object to track chat open state per application
+  const [chatOpen, setChatOpen] = useState({}); 
   const customerId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -35,20 +35,25 @@ function CustomerJobApplications() {
             },
           }),
         ]);
-
+  
         setApplications(applicationsResponse.data);
-        setJobs(jobsResponse.data);
+  
+        console.log(jobsResponse.data)
+        const customerJobs = jobsResponse.data.filter(job => job.customer_id === Number(customerId));
+        console.log(customerJobs)
+        setJobs(customerJobs);
       } catch (error) {
         console.error("Error fetching applications and jobs:", error);
         setError("Failed to load data. Please try again later.");
       }
     };
-
+  
     fetchApplicationsAndJobs();
-  }, []);
-
+  }, [customerId]);
+  
   const handleEditClick = (jobId) => {
     const job = jobs.find(job => job.id === jobId);
+    console.log("Editing Job:", job);
     setEditingJobId(jobId);
     setUpdatedJobDetails({
       title: job.title,
@@ -60,11 +65,26 @@ function CustomerJobApplications() {
       duration: job.duration,
       status: job.status,
     });
+
+    console.log("Updated Job Details:",{
+      title: job.title,
+      description: job.description,
+      required_skills: job.required_skills,
+      location: job.location,
+      pay_rate: job.pay_rate,
+      rate_type: job.rate_type,
+      duration: job.duration,
+      status: job.status,
+    });
   };
 
+  useEffect(() => {
+    console.log("Updated Job Details State:", updatedJobDetails);
+  }, [updatedJobDetails]);
+  
   const handleJobUpdate = async (jobId, updatedJobDetails) => {
-    updatedJobDetails.pay_rate = parseFloat(updatedJobDetails.pay_rate); // Convert pay_rate to a number
-    
+    updatedJobDetails.pay_rate = parseFloat(updatedJobDetails.pay_rate); 
+  
     try {
       const response = await axios.put(
         `http://localhost:8000/api/jobs/${jobId}/`,
@@ -75,15 +95,20 @@ function CustomerJobApplications() {
           },
         }
       );
-      console.log("Job updated successfully:", response.data);
+  
+      console.log("API Response:", response.data); 
+  
       alert("Job updated successfully");
   
-      // Update the jobs state with the updated job
-      setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job.id === jobId ? { ...job, ...response.data } : job
-        )
-      );
+      const updatedJobsResponse = await axios.get('http://localhost:8000/api/jobs/', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+  
+      console.log("Updated Jobs List:", updatedJobsResponse.data); 
+  
+      setJobs(updatedJobsResponse.data);
   
       setEditingJobId(null);
     } catch (error) {
@@ -91,7 +116,7 @@ function CustomerJobApplications() {
       alert("Failed to update job. Please try again.");
     }
   };
-    
+      
   const handleJobDelete = async (jobId) => {
     try {
       const response = await axios.delete(
@@ -105,7 +130,6 @@ function CustomerJobApplications() {
       console.log("Job deleted successfully:", response.data);
       alert("Job deleted successfully");
 
-      // Remove the deleted job from the jobs state
       setJobs(jobs.filter((job) => job.id !== jobId));
     } catch (error) {
       console.error("Error deleting job:", error);
@@ -144,6 +168,30 @@ function CustomerJobApplications() {
     }
   };
   
+  const handleRejectCaretaker = async (applicationId) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:8000/api/applications/${applicationId}/update/`,
+        { status: "Rejected" },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      alert("Caretaker successfully rejected!");
+  
+      setApplications((prevApplications) =>
+        prevApplications.map((app) =>
+          app.id === applicationId ? { ...app, status: "Rejected" } : app
+        )
+      );
+    } catch (error) {
+      console.error("Error updating application status:", error);
+      alert("Failed to reject caretaker. Please try again.");
+    }
+  };
+
   return (
     <div className="bg-beige min-h-screen w-full p-6">
       <div className="max-w-4x p-6 mx-auto shadow-md w-4/5 bg-white text-gray-700 rounded-lg">
@@ -163,17 +211,30 @@ function CustomerJobApplications() {
                   <p className="mt-2 font-semibold">Applicant: {application.caretaker}</p>
                   <p className="mt-2 font-semibold">Status: {application.status}</p>
                   {application.status === "Pending" && (
+                    <>
                     <button
                       onClick={() => handleHireCaretaker(application.id)}
                       className="mt-4 py-2 px-4 bg-emerald-800 text-white mr-2 font-semibold rounded-md hover:bg-coral"
                     >
                       Hire Caretaker
                     </button>
+                    <button
+                      onClick={() => handleRejectCaretaker(application.id)}
+                      className="mt-4 py-2 px-4 bg-sage text-gray-700 mr-2 font-semibold rounded-md hover:bg-coral"
+                    >
+                      Reject Caretaker
+                    </button>
+
+                    </>
                   )}
 
                   {application.status === "Hired" && (
                     <button disabled className="mt-4 py-2 px-4 bg-emerald-800 text-white mr-2 font-semibold rounded-md ">Caretaker Hired</button>
                   )}
+                  {application.status === "Rejected" && (
+                    <button disabled className="mt-4 py-2 px-4 bg-emerald-800 text-white mr-2 font-semibold rounded-md ">Caretaker Rejected</button>
+                  )}
+
                   <button
                     onClick={() => toggleChat(application.id)}
                     className="mt-4 py-2 px-4 bg-coral text-white font-semibold rounded-md hover:bg-emerald-700"
@@ -189,7 +250,6 @@ function CustomerJobApplications() {
             })
           )}
         </div>
-          {/* Display jobs and edit button */}
           <div className="mt-8">
             <h3 className="text-xl font-bold mb-4 text-emerald-dark">Your Jobs</h3>
             {jobs.length === 0 ? (

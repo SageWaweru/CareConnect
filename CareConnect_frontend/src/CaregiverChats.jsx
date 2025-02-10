@@ -18,7 +18,6 @@ const CaregiverChats = () => {
       .then((response) => {
         const allMessages = response.data.all_messages || [];
 
-        // Group messages by conversation (sender-receiver)
         const groupedConversations = {};
         const uniqueUserIds = new Set();
 
@@ -37,20 +36,18 @@ const CaregiverChats = () => {
           groupedConversations[otherUserId].push(message);
         });
 
-        // Sort messages by timestamp (latest first)
         for (const userId in groupedConversations) {
           groupedConversations[userId].sort(
             (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
           );
         }
 
-        // Create chat threads for each user, but only keep the latest message
         const sortedChats = Object.entries(groupedConversations)
           .map(([userId, conversation]) => ({
             userId,
-            latestMessage: conversation[0] || null,  // Ensure there is a message
+            latestMessage: conversation[0] || null,  
           }))
-          .filter(({ latestMessage }) => latestMessage !== null)  // Filter out any conversations with no messages
+          .filter(({ latestMessage }) => latestMessage !== null) 
           .sort((a, b) => {
             const latestMessageA = a.latestMessage?.timestamp;
             const latestMessageB = b.latestMessage?.timestamp;
@@ -59,7 +56,6 @@ const CaregiverChats = () => {
 
         setChats(sortedChats);
 
-        // Fetch usernames for unique user IDs
         fetchUsernames([...uniqueUserIds]);
       })
       .catch((error) => {
@@ -70,7 +66,6 @@ const CaregiverChats = () => {
       });
   }, [navigate]);
 
-  // Fetch usernames based on userId
   const fetchUsernames = async (userIds) => {
     try {
       const responses = await Promise.all(

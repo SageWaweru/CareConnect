@@ -4,13 +4,12 @@ import { useNavigate } from "react-router-dom";
 const SchoolList = () => {
   const [schools, setSchools] = useState([]);
   const navigate = useNavigate();
-  // Fetch schools on component mount
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/schools/"); // Replace with your actual API endpoint for schools
+        const response = await fetch("http://127.0.0.1:8000/api/schools/"); 
         const data = await response.json();
-        setSchools(data); // Save the fetched schools to state
+        setSchools(data); 
       } catch (error) {
         console.error("Error fetching schools:", error);
       }

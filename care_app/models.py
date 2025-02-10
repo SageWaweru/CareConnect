@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
 from cloudinary.models import CloudinaryField
-from django.db.models import Avg
-from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 
 class CustomUser(AbstractUser):
@@ -39,13 +37,12 @@ class CaretakerProfile(models.Model):
     
 
     def update_average_rating(self):
-            reviews = Review.objects.filter(caretaker_profile=self)
+            reviews = Review.objects.filter(caretaker=self)
             total_rating = sum([review.rating for review in reviews])
             number_of_reviews = reviews.count()
             if number_of_reviews > 0:
                 average = total_rating / number_of_reviews
-                # Ensure the average is within the 1-5 star range
-                self.average_rating = round(min(5, max(1, average)), 2)  # Clamp and round the average
+                self.average_rating = round(min(5, max(1, average)), 2)  
             else:
                 self.average_rating = 0
             self.save()    
@@ -61,24 +58,22 @@ class Review(models.Model):
         unique_together = ['caretaker', 'user']
 
     def save(self, *args, **kwargs):
-        # Ensure the rating is between 1 and 5
         if self.rating < 1 or self.rating > 5:
             raise ValidationError("Rating must be between 1 and 5.")
 
-        is_new_review = not self.pk  # Check if this is a new review
+        is_new_review = not self.pk
 
-        super().save(*args, **kwargs)  # Save the review first
+        super().save(*args, **kwargs)  
 
         if is_new_review:
             self.caretaker.number_of_ratings += 1
-            self.caretaker.update_average_rating()  # Update the average rating
-            self.caretaker.save()  # Save the caretaker after the review
+            self.caretaker.update_average_rating()  
+            self.caretaker.save() 
 
     def delete(self, *args, **kwargs):
-        # Update the caretaker profile's rating when deleting the review
         self.caretaker.number_of_ratings -= 1
-        self.caretaker.update_average_rating()  # Recalculate the average rating
-        self.caretaker.save()  # Save the caretaker after the deletion
+        self.caretaker.update_average_rating()  
+        self.caretaker.save()  
         super().delete(*args, **kwargs)
 
     def __str__(self):
@@ -138,7 +133,6 @@ class JobApplication(models.Model):
     def __str__(self):
         return f"{self.caretaker.username} applied to {self.job.title}"
 
-# Vocational School Model
 class VocationalSchool(models.Model):
     manager = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name="school")  
     name = models.CharField(max_length=255)
@@ -149,7 +143,6 @@ class VocationalSchool(models.Model):
     def __str__(self):
         return self.name
 
-# Course Model
 class Course(models.Model):
     STATUS_CHOICES = [
         ('open', 'Open'),
@@ -162,13 +155,12 @@ class Course(models.Model):
     price = models.IntegerField(default=0)
     duration = models.CharField(max_length=50)  
     certification_approved = models.BooleanField(default=False)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')  # New field
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open') 
 
 
     def __str__(self):
         return self.title
 
-# Enrollment Model
 class Enrollment(models.Model):
     caretaker = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="enrollments")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="enrollments")
@@ -180,10 +172,3 @@ class Enrollment(models.Model):
     class Meta:
         unique_together = ('caretaker', 'course')
 
-# Certification Model
-class Certification(models.Model):
-    enrollment = models.OneToOneField(Enrollment, on_delete=models.CASCADE, null=True, blank=True, related_name="certification")
-    approved = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Certification for {self.enrollment.course.title}"

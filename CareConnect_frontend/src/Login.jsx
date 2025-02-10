@@ -19,7 +19,7 @@ const Login = () => {
           navigate('/');
         }
       }
-    }, [user, navigate]); // Runs when `user` updates
+    }, [user, navigate]); 
   
 
     const handleSubmit = async (e) => {

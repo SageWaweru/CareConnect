@@ -14,7 +14,7 @@ const Schools = () => {
         setLoading(false);
       })
       .catch((error) => {
-        setError("Failed to fetch schools");
+        console.log(error);
         setLoading(false);
       });
   }, []);
@@ -23,9 +23,9 @@ const Schools = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="p-6 bg-alabaster w-full min-h-screen rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Vocational Schools</h2>
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse bg-white border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">ID</th>

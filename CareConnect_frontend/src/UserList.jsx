@@ -5,7 +5,6 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch users on component mount
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('accessToken');
@@ -16,7 +15,7 @@ const UserList = () => {
               'Authorization': `Bearer ${token}`,
             },
           });
-          setUsers(response.data);  // Set the users state with the data
+          setUsers(response.data); 
         } catch (error) {
           setError('Error fetching users');
           console.error(error);
@@ -27,7 +26,7 @@ const UserList = () => {
     };
 
     fetchUsers();
-  }, []);  // Empty dependency array means this runs once when the component mounts
+  }, []);  
 
   return (
     <div>

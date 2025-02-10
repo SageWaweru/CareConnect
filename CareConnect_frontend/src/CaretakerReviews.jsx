@@ -43,6 +43,13 @@ const CaretakerReviews = () => {
       
     return (
         <div className="mx-auto bg-beige w-full min-h-screen p-4">
+                                       <div
+          role="button"
+          className="float-right text-3xl mr-4 m text-emerald-800 hover:text-coral transition"
+          onClick={() => navigate(`/caretaker/${caretakerId}`)}
+        >
+          &times;
+        </div>
 
             {loading && <p>Loading reviews...</p>}
 

@@ -5,101 +5,45 @@ function JobApplications() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [hasApplied, setHasApplied] = useState({});
+  const [applicationStatus, setApplicationStatus] = useState({});
+
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    const fetchJobsAndApplications = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/jobs/', {
+        const jobsResponse = await axios.get("http://localhost:8000/api/jobs/", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
-        setJobs(response.data);
-
-        // After fetching the jobs, check which jobs the user has already applied for
-        const appliedJobs = await fetchAppliedJobs();
-        setHasApplied(appliedJobs);
+        setJobs(jobsResponse.data);
+  
+        const applicationsResponse = await axios.get("http://localhost:8000/api/applications/", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        });
+  
+        const appliedJobsMap = {};
+        const statusMap = {};
+  
+        applicationsResponse.data.forEach(application => {
+          appliedJobsMap[application.job] = true;
+          statusMap[application.job] = application.status; 
+        });
+  
+        setHasApplied(appliedJobsMap);
+        setApplicationStatus(statusMap);
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+        console.error("Error fetching data:", error);
         setError("Failed to load jobs. Please try again later.");
       }
     };
-
-    // Fetch applied jobs
-    const fetchAppliedJobs = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8000/api/applications/`, 
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          }
-        );
-        // Create an object that maps job IDs to true if applied
-        const appliedJobs = response.data.reduce((acc, application) => {
-          acc[application.job] = true;
-          return acc;
-        }, {});
-        return appliedJobs;
-      } catch (error) {
-        console.error("Error fetching applied jobs:", error);
-        return {};
-      }
-    };
-
-    fetchJobs();
+  
+    fetchJobsAndApplications();
   }, []);
 
-
-// const fetchProfileId = async () => {
-//   try {
-//     const token = localStorage.getItem('accessToken');
-//     const response = await axios.get(`http://localhost:8000/api/api/caretaker-profiles/user/${localStorage.getItem("userId")}`, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     });
-//     console.log(response.data)
-//     return response.data.id;  
-//   } catch (error) {
-//     console.error('Error fetching profile:', error);
-//     return null;
-//   }
-// };
-
-// const handleApply = async (jobId) => {
-//   try {
-//     const profileId = await fetchProfileId();
-
-//     if (!profileId) {
-//       alert('Profile not found. Please log in again.');
-//       return;
-//     }
-
-//     // Proceed with the job application request
-//     const response = await axios.post(
-//       'http://localhost:8000/api/applications/',
-//       {
-//         job: jobId,
-//         profile_id: profileId,  
-//       },
-//       {
-//         headers: {
-//           Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-//         },
-//       }
-//     );
-//     setHasApplied(prevState => ({ ...prevState, [jobId]: true }));
-//     alert('Applied successfully!');
-//   } catch (error) {
-//     console.error('Error applying for the job:', error);
-//     alert('Error applying for the job. Please try again.');
-//   }
-// };
-
-
-  const handleApply = async (jobId) => {
+    const handleApply = async (jobId) => {
     try {
       const response = await axios.post(
         'http://localhost:8000/api/applications/',
@@ -110,7 +54,6 @@ function JobApplications() {
           },
         }
       );
-      // After successful application, update the `hasApplied` state
       setHasApplied(prevState => ({ ...prevState, [jobId]: true }));
       alert("Applied successfully!");
     } catch (error) {
@@ -154,10 +97,19 @@ function JobApplications() {
                       disabled
                       className="mt-4 py-2 px-4 bg-emerald-800 text-white font-semibold rounded-md cursor-not-allowed"
                     >
-                      Applied
+                      {applicationStatus[job.id]}
                     </button>
                   )}
-                  {job.status !== "Open" && (
+                    {job.status !== "Open" && hasApplied[job.id] &&(
+                    <button
+                      disabled
+                      className="mt-4 py-2 px-4 bg-emerald-800 text-white font-semibold rounded-md cursor-not-allowed"
+                    >
+                      {applicationStatus[job.id]}
+                      </button>
+                  )}
+
+                  {job.status !== "Open" && !hasApplied[job.id] &&(
                     <button
                       disabled
                       className="mt-4 py-2 px-4 bg-gray-400 text-white font-semibold rounded-md cursor-not-allowed"

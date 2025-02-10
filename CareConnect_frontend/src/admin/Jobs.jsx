@@ -38,10 +38,8 @@ const Jobs = () => {
 
         console.log("Job posted successfully:", response.data);
         
-        // Update job list without re-fetching from the server
         setJobs((prevJobs) => [...prevJobs, response.data]);
 
-        // Clear form
         setNewJob({
             title: "",
             description: "",
@@ -68,7 +66,6 @@ const Jobs = () => {
     axios
       .patch(`http://127.0.0.1:8000/api/admin/jobs/${id}/`, { status })
       .then(() => {
-        // Re-fetch jobs after status update
         axios.get("http://127.0.0.1:8000/api/admin/job-posts/")
           .then((response) => setJobs(response.data))
           .catch((error) => setError("Error fetching jobs: " + (error.response ? error.response.data : error.message)));
@@ -106,7 +103,7 @@ const Jobs = () => {
   return (
     <div className="p-6 bg-beige text-gray-700 min-h-screen">
       <h2 className="text-2xl font-bold">Job Management</h2>
-      {error && <div className="text-red-500">{error}</div>} {/* Show error message if any */}
+      {error && <div className="text-red-500">{error}</div>} 
       <button
         onClick={() => setShowForm(!showForm)}
         className="mt-6 mb-4 px-4 py-2 bg-emerald-800 text-white rounded hover:bg-coral"
@@ -241,32 +238,32 @@ const Jobs = () => {
       <table className="w-full mt-4 bg-white shadow rounded-lg table-auto">
         <thead>
           <tr className="bg-gray-100">
-            <th className="p-3 text-left">Id</th>
-            <th className="p-3 text-left">Job Title</th>
-            <th className="p-3 text-left">Description</th>
-            <th className="p-3 text-left">Required Skills</th>
-            <th className="p-3 text-left">Duration</th>
-            <th className="p-3 text-left">Location</th>
-            <th className="p-3 text-left">Pay Rate</th>
-            <th className="p-3 text-left">Rate Type</th>
-            <th className="p-3 text-left">Status</th>
-            <th className="p-3 text-left">Change Status</th>
-            <th className="p-3 text-left">Actions</th>
+            <th className="border p-3 text-left">ID</th>
+            <th className="border p-3 text-left">Job Title</th>
+            <th className="border p-3 text-left">Description</th>
+            <th className="border p-3 text-left">Required Skills</th>
+            <th className="border p-3 text-left">Duration</th>
+            <th className="border p-3 text-left">Location</th>
+            <th className="border p-3 text-left">Pay Rate</th>
+            <th className="border p-3 text-left">Rate Type</th>
+            <th className="border p-3 text-left">Status</th>
+            <th className="border p-3 text-left">Change Status</th>
+            <th className="border p-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {jobs.map((job) => (
             <tr key={job.id} className="border-b">
-              <td className="p-3 text-center">{job.id}</td>
-              <td role="button" onClick={() => navigate(`/applications/${job.id}`)} className="p-3 hover:text-coral">{job.title}</td>
-              <td className="p-3">{job.description}</td>
-              <td className="p-3">{job.required_skills}</td>
-              <td className="p-3">{job.duration}</td>
-              <td className="p-3">{job.location}</td>
-              <td className="p-3">{job.pay_rate}</td>
-              <td className="p-3">{job.rate_type}</td>
-              <td className="p-3">{job.status}</td>
-              <td className="p-3">
+              <td className="border p-3 text-center">{job.id}</td>
+              <td role="button" onClick={() => navigate(`/applications/${job.id}`)} className="border p-3 hover:text-coral">{job.title}</td>
+              <td className="border p-3">{job.description}</td>
+              <td className="border p-3">{job.required_skills}</td>
+              <td className="border p-3">{job.duration}</td>
+              <td className="border p-3">{job.location}</td>
+              <td className="border p-3">{job.pay_rate}</td>
+              <td className="border p-3">{job.rate_type}</td>
+              <td className="border p-3">{job.status}</td>
+              <td className="border p-3">
                 <select
                   value={job.status}
                   className="px-4 py-2 text-white rounded bg-emerald-800 hover:bg-emerald-700"

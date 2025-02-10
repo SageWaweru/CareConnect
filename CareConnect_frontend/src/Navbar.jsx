@@ -18,11 +18,9 @@ const Navbar = () => {
         <Link to="/" className="text-2xl hover:text-coral text-emeraldDark font-semibold">CareConnect</Link>
 
         <div className="space-x-4">
-          {/* If the user is logged in, show specific links */}
           {user ? (
             <>
 
-              {/* Role-specific links */}
               {user.role === 'admin' && (
                 <>
                 <Link to="/admin" className="hover:text-coral text-emeraldDark">Dashboard</Link>
@@ -35,7 +33,7 @@ const Navbar = () => {
               )}
               {user.role === 'customer' && (
                 <>
-                <Link to="/" className="hover:text-coral text-emeraldDark">Customer Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Dashboard</Link>
                 <Link to="/caretakers" className="hover:text-coral text-emeraldDark">Caretakers</Link>
                 <Link to="/createjob" className="hover:text-coral text-emeraldDark">Post Job</Link>
                 <Link to="/customer-jobs" className="hover:text-coral text-emeraldDark">My Jobs</Link>
@@ -46,7 +44,7 @@ const Navbar = () => {
               )}
               {user.role === 'caretaker' && (
                 <>
-                <Link to="/" className="hover:text-coral text-emeraldDark">Caretaker Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Dashboard</Link>
                 <Link to="/caretaker-profile" className="hover:text-coral text-emeraldDark">Profile</Link>
                 <Link to="/caregiver-chats" className="hover:text-coral text-emeraldDark">Messages</Link>
                 <Link to="/applyjob" className="hover:text-coral text-emeraldDark">Jobs</Link>
@@ -57,18 +55,14 @@ const Navbar = () => {
               )}
               {user.role === 'vocational_school' && (
                 <>
-                <Link to="/" className="hover:text-coral text-emeraldDark">Vocational School Dashboard</Link>
+                <Link to="/" className="hover:text-coral text-emeraldDark">Dashboard</Link>
                 <Link to="/school" className="hover:text-coral text-emeraldDark">Profile</Link>
+                <Link to="/students" className="hover:text-coral text-emeraldDark">Students</Link>
                 <Link to="/courses" className="hover:text-coral text-emeraldDark">Courses</Link>
                 <Link to="/enrollments" className="hover:text-coral text-emeraldDark">Enrollments</Link>
-
-                {/* <Link to="/schools/:id" className="hover:text-coral text-emeraldDark">School Profile</Link>
-                <Link to="/courses/add" className="hover:text-coral text-emeraldDark">Add Courses</Link>
-                <Link to="/schools/manage/:id?" className="hover:text-coral text-emeraldDark">Manage School</Link> */}
                 </>
               )}
 
-              {/* Logout button */}
               <span role='button' onClick={handleLogout} className="hover:text-coral text-emeraldDark">Logout</span>
             </>
           ) : (

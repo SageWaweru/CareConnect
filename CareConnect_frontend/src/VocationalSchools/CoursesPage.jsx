@@ -12,11 +12,13 @@ const CoursesPage = () => {
     setSelectedCourseId(courseId);
   };
 
-  const closeEnrollForm = () => {
+  const handleEnrollSuccess = (data) => {
     setSelectedCourseId(null);
-  };
+    console.log("Enrollment successful:", data);
+    alert("Your enroll request has been sent successfully.");
+};
 
-  useEffect(() => {
+useEffect(() => {
     const fetchCourses = async () => {
       try {
         const courseResponse = await fetch(`http://127.0.0.1:8000/api/courses/school/${schoolId}/`);
@@ -47,7 +49,6 @@ const CoursesPage = () => {
               <p className="m-2"><strong>Price:</strong> Ksh {course.price}</p>
               <p className="m-2"><strong>Status:</strong> {course.status}</p>
               
-              {/* Render Enroll Button if Course is Open */}
               {course.status === "open" ? (
                 <button
                   className="bg-coral text-white hover:bg-emerald-800 px-4 w-full py-2 rounded"
@@ -56,7 +57,6 @@ const CoursesPage = () => {
                   Enroll
                 </button>
               ) : (
-                // Render disabled button if Course is Closed
                 <button
                   disabled
                   className="bg-coral text-white px-4 w-full py-2 rounded"
@@ -69,9 +69,9 @@ const CoursesPage = () => {
         )}
       </div>
       
-      {/* Show the enrollment form when a course is selected */}
       {selectedCourseId && (
-        <EnrollForm courseId={selectedCourseId} onClose={closeEnrollForm} />
+        <EnrollForm courseId={selectedCourseId} onEnrollSuccess={handleEnrollSuccess} 
+        />
       )}
     </div>
   );

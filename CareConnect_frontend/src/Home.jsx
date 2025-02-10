@@ -19,10 +19,10 @@ const Home = () => {
           </p>
           <div className="flex justify-center space-x-4">
             <a
-              href="/explore"
+              href="/VocationalSchool"
               className="bg-[#2D6A4F] text-white px-6 py-3 rounded-lg hover:bg-[#1E5136] hover:text-white transition"
             >
-              Explore Services
+              Explore Schools
             </a>
             <a
               href="/caretakers"
@@ -33,7 +33,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Features Section */}
         <section className="bg-white py-16">
           <div className="container p-4 mx-auto text-center">
             <h3 className="text-3xl font-bold mb-8">What We Offer</h3>
@@ -41,13 +40,13 @@ const Home = () => {
               <div className="bg-[#B0BC98] p-6 rounded-lg shadow-lg">
                 <h4 className="text-2xl font-semibold mb-4">For Customers</h4>
                 <p className="text-gray-700">
-                  Access skilled caretakers and manage appointments seamlessly.
+                  Access skilled caretakers, post jobs and hire caretakers according to your requirements.
                 </p>
               </div>
               <div className="bg-[#E09891] p-6 rounded-lg shadow-lg">
                 <h4 className="text-2xl font-semibold mb-4">For Caretakers</h4>
                 <p className="text-gray-700">
-                  Find flexible job opportunities and track your progress.
+                  Find flexible job opportunities and promote yourself to potential clients.
                 </p>
               </div>
               <div className="bg-[#2D6A4F] p-6 rounded-lg shadow-lg text-white">
@@ -55,8 +54,8 @@ const Home = () => {
                   For Vocational Schools
                 </h4>
                 <p>
-                  Manage certifications, connect with students, and enhance
-                  professional growth.
+                  Manage enrollments, track students, and
+                  promote your courses.
                 </p>
               </div>
             </div>
@@ -68,9 +67,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-beige px-4 w-full py-6">
-      {/* <h1 className="text-3xl font-bold text-emerald-800 mb-6">Hello, {user.username}!</h1> */}
-
-      {/* Display content based on role */}
       {user.role === "admin" || user.is_superuser ? (
         <div className="text-center bg-emerald-100 p-6 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-xl font-semibold text-emerald-800 mb-2">
@@ -98,9 +94,7 @@ const Home = () => {
               </div>
             </header>
 
-            {/* Dashboard Content */}
             <div className="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Job Opportunities */}
               <div className=" p-6 bg-emerald-800 text-white rounded-lg shadow-md border border-gray-300 mb-6">
                 <h2 className="text-xl font-semibold  mb-4">Post Jobs</h2>
                 <p className=" mb-4">
@@ -128,7 +122,7 @@ const Home = () => {
                   </button>
               </div>
 
-              {/* Job Applications */}
+
               <div className="bg-sage text-gray-700 p-6 rounded-lg shadow-md border border-gray-300 mb-6">
                 <h2 className="text-xl font-semibold text-emerald-dark mb-4">
                   Your Job Applications
@@ -322,15 +316,100 @@ const Home = () => {
           </div>
         </div>
       ) : user.role === "vocational_school" ? (
-        <div className="text-center bg-orange-100 p-6 rounded-lg shadow-md w-full max-w-md">
-          <h2 className="text-xl font-semibold text-yellow-800 mb-2">
-            Vocational School Dashboard
-          </h2>
-          <p className="text-gray-700">
-            You can manage caretakers, view assignments, and track student
-            progress here.
-          </p>
-        </div>
+        <div className="bg-beige min-h-screen w-full">
+          <div className="max-w-6xl mx-auto p-6">
+            <header className="bg-alabaster text-gray-700 p-4 rounded-lg shadow-md">
+              <div className="container p-6 mx-auto  flex flex-col text-center justify-between items-center">
+                <h2 className="text-4xl font-extrabold mb-6">
+                  Welcome to CareConnect's Vocational School Dashboard,{" "}
+                  {user ? user.username : "Guest"}!
+                </h2>
+                <p className="text-xl mb-8 text-gray-700 max-w-2xl mx-auto">
+                  Connecting caretaking professionals and customers for
+                  trustworthy and personalized care services.
+                </p>
+
+                <div className="flex items-center"></div>
+              </div>
+            </header>
+
+            <div className="grid grid-cols-1 mt-6 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className=" p-6 bg-emerald-800 text-white rounded-lg shadow-md border border-gray-300 mb-6">
+                <h2 className="text-xl font-semibold  mb-4">Create a profile</h2>
+                <p className=" mb-4">
+                  Easily post  and find skilled caretakers to meet your
+                  needs.
+                </p>
+
+                <div className="mb-4">
+                  <p >
+                    Share and advertise your schools courses and their details
+                   to aspiring caretakers and manage enrollments by approving enrollments and closing or opening courses for enrollment.                </p>
+                </div>
+
+                <div className="mb-4">
+                  <p >
+                    With just a few steps, you can get your job listing out to
+                    potential caretakers and begin reviewing applications.
+                  </p>
+                </div>
+
+                  <button onClick={() => navigate("/School")}className="bg-alabaster text-gray-700 py-2 px-4 rounded-md hover:bg-coral w-full">
+                    View School
+                  </button>
+              </div>
+
+
+              <div className="bg-sage text-gray-700 p-6 rounded-lg shadow-md border border-gray-300 mb-6">
+                <h2 className="text-xl font-semibold text-emerald-dark mb-4">
+                  Your Course
+                </h2>
+                <p className=" mb-4">
+                  Track and manage your course easily.
+                </p>
+
+                <div className="mb-4">
+                  <p >
+                    Share and advertise your schools courses and their details
+                   to aspiring caretakers and manage enrollments by approving enrollments and closing or opening courses for enrollment.                </p>
+                </div>
+
+                  <button onClick={() => navigate("/courses")} className="bg-emerald-800 text-white py-2 px-4 rounded-md hover:bg-coral w-full">
+                    Manage Courses
+                  </button>
+              </div>
+
+              <div className="bg-alabaster text-gray-700 p-6 rounded-lg shadow-md border border-gray-300 mb-6">
+                <h2 className="text-xl font-semibold text-emerald-dark mb-4">
+                  Students
+                </h2>
+                <p className="mb-4">
+                  Access skilled professionals for your care needs.
+                </p>
+
+                <div className="mb-4">
+                  <p >
+                    Whether you're looking for a
+                    caregiver for elderly care, children, or specialized medical
+                    assistance, you'll find skilled professionals ready to help.
+                  </p>
+                </div>
+
+                <div className="mb-4">
+                  <p >
+                    Browse through detailed profiles, view their ratings and
+                    reviews, and hire the caretaker that fits your needs. 
+                  </p>
+                </div>
+
+                  <button onClick={() => navigate("/students")} className="bg-sage text-gray-700 py-2 px-4 rounded-md hover:bg-coral w-full">
+                    View Students
+                  </button>
+               
+              </div>
+            </div>
+            </div>
+          </div>
       ) : (
         <div className="text-center bg-gray-200 p-6 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Welcome!</h2>

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import CustomUser, CaretakerProfile, Review, Message, Reply, JobApplication, JobPost, VocationalSchool, Course, Enrollment, Certification
+from .models import CustomUser, CaretakerProfile, Review, Message, Reply, JobApplication, JobPost, VocationalSchool, Course, Enrollment
 
 User = get_user_model()
 
@@ -64,44 +64,39 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Rating must be between 1 and 5.")
         return value
 
-# ReplySerializer for handling replies
 class ReplySerializer(serializers.ModelSerializer):
     class Meta:
         model = Reply
         fields = '__all__'
 
     def create(self, validated_data):
-        # Retrieve the message being replied to
         message = validated_data['message']
         
-        # Check if it's a reply and populate the `reply_to` field
         reply_to_message = validated_data.get('reply_to', None)
         
-        # If reply_to_message is None, we should not link it to any other message
         reply = Reply.objects.create(
             message=message,
             sender=validated_data['sender'],
             receiver=validated_data['receiver'],
             content=validated_data['content'],
-            reply_to=reply_to_message  # Only link if reply_to_message is provided
+            reply_to=reply_to_message  
         )
         
         return reply
 
-# ChatMessageSerializer to include replies as nested data
 class ChatMessageSerializer(serializers.ModelSerializer):
-    replies = ReplySerializer(many=True, read_only=True)  # Use ReplySerializer for replies
+    replies = ReplySerializer(many=True, read_only=True)  
 
     class Meta:
         model = Message
         fields = '__all__'
     def get_replies(self, obj):
-        # Fetch replies related to the message (optimize with prefetch_related if necessary)
         replies = Reply.objects.filter(message=obj)
-        return ReplySerializer(replies, many=True).data  # Use ReplySerializer to serialize replies
+        return ReplySerializer(replies, many=True).data  
 
 class JobPostSerializer(serializers.ModelSerializer):
     customer = serializers.StringRelatedField(read_only=True)
+    customer_id = serializers.ReadOnlyField(source='customer.id')
 
     class Meta:
         model = JobPost
@@ -154,12 +149,10 @@ class CourseSerializer(serializers.ModelSerializer):
 
 class EnrollmentSerializer(serializers.ModelSerializer):
     course_title = serializers.CharField(source="course.title", read_only=True)
+    course_duration = serializers.CharField(source="course.duration", read_only=True)
+
     class Meta:
         model = Enrollment
         fields = '__all__'
 
-class CertificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Certification
-        fields = '__all__'
 

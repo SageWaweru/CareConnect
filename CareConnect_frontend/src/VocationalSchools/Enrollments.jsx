@@ -6,10 +6,8 @@ const Enrollments = () => {
   const [loading, setLoading] = useState(true);
   const [schoolId, setSchoolId] = useState(null);
 
-  // Function to get token from localStorage
   const getToken = () => localStorage.getItem("accessToken");
 
-  // Fetch school ID
   useEffect(() => {
     const token = getToken();
     axios
@@ -50,7 +48,6 @@ const Enrollments = () => {
         },
       });
 
-      // Update enrollments state
       setEnrollments(enrollments.map((enrollment) =>
         enrollment.id === enrollmentId ? { ...enrollment, approved: true } : enrollment
       ));
@@ -61,33 +58,37 @@ const Enrollments = () => {
 
   return (
     <div className="p-6 bg-beige w-full min-h-screen">
-      <div className="bg-white w-3/5 mx-auto p-6 rounded-lg shadow-lg text-gray-700">
+      <div className="bg-white w-full mx-auto p-6 rounded-lg shadow-lg text-gray-700">
         <h2 className="text-2xl font-semibold">Enrollments</h2>
         {loading ? (
           <p>Loading enrollments...</p>
         ) : enrollments.length === 0 ? (
           <p>No enrollments found.</p>
         ) : (
-          <ul className="bg-alabaster text-gray-700">
-            {enrollments.map((enrollment) => (
-              <li key={enrollment.id} className="border p-4 mb-4">
-                <p><strong>Name:</strong> {enrollment.name}</p>
-                <p><strong>Email:</strong> {enrollment.email}</p>
-                <p><strong>Age:</strong> {enrollment.age}</p>
-                <p><strong>Course:</strong> {enrollment.course_title}</p>
-                <p><strong>Status:</strong> {enrollment.approved ? "Approved" : "Pending"}</p>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+  {enrollments.length > 0 ? (
+    enrollments.map((enrollment) => (
+      <div key={enrollment.id} className="border p-4 rounded-md shadow bg-alabaster">
+        <p><strong>Name:</strong> {enrollment.name}</p>
+        <p><strong>Email:</strong> {enrollment.email}</p>
+        <p><strong>Age:</strong> {enrollment.age}</p>
+        <p><strong>Course:</strong> {enrollment.course_title}</p>
+        <p><strong>Status:</strong> {enrollment.approved ? "Approved" : "Pending"}</p>
 
-                {!enrollment.approved && (
-                  <button
-                    onClick={() => handleApproveEnrollment(enrollment.id)}
-                    className="bg-emerald-800 text-white px-4 py-2 rounded mt-2"
-                  >
-                    Approve Enrollment
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
+        {!enrollment.approved && (
+          <button
+            onClick={() => handleApproveEnrollment(enrollment.id)}
+            className="bg-coral hover:bg-emerald-800 text-white px-4 py-2 rounded mt-2"
+          >
+            Approve Enrollment
+          </button>
+        )}
+      </div>
+    ))
+  ) : (
+    <p>No enrollments found.</p>
+  )}
+</div>
         )}
       </div>
     </div>

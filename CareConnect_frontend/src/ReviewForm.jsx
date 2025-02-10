@@ -12,41 +12,36 @@ const ReviewForm = () => {
     const [reviewText, setReviewText] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
-
+        
 
     useEffect(() => {
         const token = localStorage.getItem("accessToken");
-
-        console.log("Token:", token);
-
+        const userId = localStorage.getItem("userId");
+    
         if (!token) {
             alert("Please login to view or rate this caretaker.");
             navigate("/login");  
             return;
         }
-
-        axios
-            .get(`http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((response) => {
-                console.log("Response Status:", response.status);
-                console.log("Response Data:", response.data);
-
-                if (Array.isArray(response.data)) {
-                    setReviews(response.data);
-                } else {
-                    setReviews([]); 
-                }
-            })
-            .catch((err) => {
-                console.error("Error fetching reviews:", err);
-                setReviews([]); 
-            });
-    }, [caretakerId, navigate]);
     
+        axios.get(`http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+            if (Array.isArray(response.data)) {
+                setReviews(response.data);
+                const userReview = response.data.find(review => review.user === userId);
+                if (userReview) {
+                    alert("You have already reviewed this caretaker.");
+                    navigate(`/caretakers`);
+                }
+            }
+        })
+        .catch((err) => {
+            console.error("Error fetching reviews:", err);
+        });
+    }, [caretakerId, navigate]);
+        
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");  
@@ -58,16 +53,22 @@ const ReviewForm = () => {
     
         const token = localStorage.getItem("accessToken");
         const userId = localStorage.getItem("userId");
-        const reviewToSend = reviewText || "No additional comments";
+    
+        // Prevent duplicate submission
+        const existingReview = reviews.find(review => review.user === userId);
+        if (existingReview) {
+            alert("You have already reviewed this caretaker.");
+            return;
+        }
     
         try {
             const response = await axios.post(
                 `http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`,
                 {
                     rating,
-                    review_text: reviewToSend,
-                    user: userId, 
-                    
+                    review_text: reviewText || "No additional comments",
+                    user: userId,
+                    caretaker: caretakerId,
                 },
                 {
                     headers: {
@@ -77,38 +78,26 @@ const ReviewForm = () => {
                 }
             );
     
-            if (response.status === 200) {
+            if (response.status === 201) {
                 setReviews([...reviews, response.data]);
                 setRating(0);
                 setReviewText(""); 
+                alert('Caretaker rated succesfully!')
+                navigate(`/caretaker/${caretakerId}`);
+
             }
     
         } catch (error) {
-            if (error.response && error.response.status === 401) {
-                alert("Please login or register to rate this caretaker.");
-                navigate("/login");
+            if (error.response?.status === 400 && error.response.data?.non_field_errors) {
+                alert("You have already reviewed this caretaker.");
+                navigate("/caretakers");
             } else {
-                console.error("Error submitting review:", error.response?.data|| error);
-                let errorMessage = "";
-      
-                if (error.response && error.response.data) {
-                  if (error.response.data[0] === "You have already reviewed this caretaker.") {
-                    errorMessage = "You have already reviewed this caretaker.";
-                    navigate("/caretakers")
-                  } else if (error.response.data.message) {
-                    console.log(error.response.data.message); 
-                  } else {
-                    errorMessage = "An error occurred while submitting your review. Please try again."; 
-                  }
-                } else {
-                  errorMessage = "An unexpected error occurred. Please try again.";
-                }
-                  
-                    alert(errorMessage);  
+                console.error("Error submitting review:", error.response?.data || error);
+                alert("An error occurred while submitting your review. Please try again.");
             }
         }
     };
-    
+        
     return (
         <div className="min-h-screen bg-beige py-10 px-4 ">
             {error && <p className="text-red-500">{error}</p>}

@@ -1,30 +1,29 @@
 import React, { useState } from "react";
 
-const EnrollForm = ({ courseId, onClose, onEnrollSuccess }) => {
+const EnrollForm = ({ courseId, onEnrollSuccess }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); // Reset error on new submission
+    setError(null); 
 
     const userDetails = {
       name,
       email,
       age,
     };
-
+      
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/courses/${courseId}/enroll/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // Include token for authentication
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify(userDetails),
       });
@@ -34,13 +33,13 @@ const EnrollForm = ({ courseId, onClose, onEnrollSuccess }) => {
         alert(errorData.detail || "Something went wrong.");
       } else {
         const data = await response.json();
-        onEnrollSuccess(data); // Notify parent component about successful enrollment
+        onEnrollSuccess(data); 
         setName("");
         setEmail("");
         setAge("");
       }
     } catch (error) {
-      setError("An error occurred during enrollment.");
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -48,15 +47,13 @@ const EnrollForm = ({ courseId, onClose, onEnrollSuccess }) => {
 
   return (
     <div className="p-6 bg-white w-3/5 shadow-md rounded-md">
-        <span role="button" onClick={onClose}
+        <span role="button"
           className="float float-right text-coral hover:text-emerald-800 text-xl"
         >
          ✖
         </span>
         <br />
       <h2 className="text-2xl font-semibold mb-4">Enroll in Course</h2>
-      
-      {error && <div className="text-red-600 mb-4">{error}</div>}
       
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

@@ -7,9 +7,9 @@ const Users = () => {
     username: "",
     email: "",
     role: "",
-    password: "", // assuming password is part of the user creation
+    password: "", 
   });
-  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
+  const [showForm, setShowForm] = useState(false); 
 
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/admin/users/").then((res) => setUsers(res.data));
@@ -50,19 +50,18 @@ const Users = () => {
         console.log("User added successfully", response.data);
         setUsers([...users, response.data]);
         setNewUser({ username: "", email: "", role: "", password: "" });
-        setShowForm(false); // Hide form after submission
+        setShowForm(false); 
       })
       .catch((error) => {
         const errorMessage = error.response ? error.response.data : error.message;
 
-        // Extract specific error messages
         const usernameError = errorMessage.username ? errorMessage.username[0] : null;
         const generalError = errorMessage.detail || errorMessage.message || "Something went wrong.";
   
         if (usernameError) {
-          alert(`${usernameError} There should not be spaces between names `);  // Show username-specific error
+          alert(`${usernameError} There should not be spaces between names `);  
         } else {
-          alert(`Error: ${generalError}`);  // Fallback to a general error
+          alert(`Error: ${generalError}`);  
         }
   
         console.error("There was an error adding the user:", errorMessage);
@@ -73,7 +72,6 @@ const Users = () => {
     <div className="p-6 bg-beige text-gray-700">
       <h2 className="text-2xl font-bold">User Management</h2>
 
-      {/* Button to toggle form visibility */}
       <button
         onClick={() => setShowForm(!showForm)}
         className="mt-6 mb-4 px-4 py-2 bg-emerald-800 text-white rounded hover:bg-coral"
@@ -81,7 +79,6 @@ const Users = () => {
         {showForm ? "Cancel" : "Add New User"}
       </button>
 
-      {/* Add User Form */}
       {showForm && (
         <form onSubmit={handleFormSubmit} className="mt-6 w-3/5 space-y-6 bg-white p-6 shadow-lg rounded-lg">
           <div className="mb-4">
@@ -143,27 +140,26 @@ const Users = () => {
         </form>
       )}
 
-      {/* User Table */}
-      <table className="w-full mt-6 bg-white shadow-lg rounded-lg">
+      <table className="w-full mt-6 bg-white border-collapse border border-gray-300 shadow-lg rounded-lg">
         <thead>
           <tr className="bg-gray-100">
-            <th className="p-2 text-left">Id</th>
-            <th className="p-2 text-left">Username</th>
-            <th className="p-2 text-left">Email</th>
-            <th className="p-2 text-left">Role</th>
-            <th className="p-2 text-left">Superuser</th>
-            <th className="p-2 text-left">Actions</th>
+            <th className="border p-2 text-left">ID</th>
+            <th className="border p-2 text-left">Username</th>
+            <th className="border p-2 text-left">Email</th>
+            <th className="border p-2 text-left">Role</th>
+            <th className="border p-2 text-left">Superuser</th>
+            <th className="border p-2 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
             <tr key={user.id} className="border-b">
-              <td className="p-2">{user.id}</td>
-              <td className="p-2">{user.username}</td>
-              <td className="p-2">{user.email}</td>
-              <td className="p-2">{user.role}</td>
-              <td className="p-2">{user.is_superuser ? "True" : "False"}</td>
-              <td className="p-2 flex space-x-2">
+              <td className="border p-2">{user.id}</td>
+              <td className="border p-2">{user.username}</td>
+              <td className="border p-2">{user.email}</td>
+              <td className="border p-2">{user.role}</td>
+              <td className="border p-2">{user.is_superuser ? "True" : "False"}</td>
+              <td className="border p-2 flex space-x-2">
                 <button
                   className="px-3 py-1 text-white rounded bg-coral hover:bg-emerald-800"
                   onClick={() => Delete(user.id)}

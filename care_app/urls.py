@@ -20,7 +20,6 @@ from . views import (
     VocationalSchoolView, 
     CourseView, 
     ApproveEnrollmentView,
-    ApproveCertificationView,
     EnrollmentAPIView,
     VocationalSchoolListView,
     SchoolCoursesView,
@@ -37,8 +36,6 @@ from . views import (
     JobPostStatusUpdateAPIView,
     AdminEnrollmentListView,
     AdminSchoolListView,
-    # caregiver_chat_detail,
-    # caregiver_chats,
 )
 
 router = DefaultRouter()
@@ -46,7 +43,6 @@ router.register(r'caretaker-profiles', CaretakerProfileViewSet, basename='careta
 
 
 urlpatterns = [
-    # JWT Token Authentication
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
@@ -60,17 +56,15 @@ urlpatterns = [
     path('users/me/', CurrentUserView.as_view(), name='current-user'), 
     path('update-user/<int:id>/', UpdateUserDetailsView.as_view(), name='update_user'),
     
-    # Caretaker profile detail and review
+    # Caretaker
     path('api/caretaker-profiles/user/<int:user_id>/', CaretakerProfileDetailView.as_view(), name='caretaker-profile-detail'),
-    
-    # Caretaker profile by ID
     path("api/caretaker-profiles/<int:id>/", CaretakerProfileByIdView.as_view(), name="caretaker-profile-by-id"),
     
     # Review path
     path('api/caretaker/<int:caretaker_id>/reviews/', ReviewListCreateView.as_view(), name='caretaker-reviews'),
     path('messages/', ChatMessageListView.as_view(), name='chat-messages'),
 
-    # path("caregiver-chats/", caregiver_chats, name="caregiver-chats"), 
+    # Messages
     path('messages/<int:message_id>/replies/', ReplyAPIView.as_view(), name='message-replies'),
     path("messages/<int:sender_id>/", ChatMessageListView.as_view(), name="chat-messag-detail"),
 
@@ -92,9 +86,8 @@ urlpatterns = [
     path('courses/<int:course_id>/enroll/', EnrollmentAPIView.as_view(), name='enroll-course'),
     path("enrollments/school/<int:school_id>/", SchoolEnrollmentsView.as_view(), name="school-enrollments"),
     path("approve-enrollment/<int:enrollment_id>/", ApproveEnrollmentView.as_view(), name="approve-enrollment"),
-    path("approve-certification/<int:certification_id>/", ApproveCertificationView.as_view(), name="approve-certification"),
 
-     # Admin URLs
+    # Admin URLs
     path('admin/users/', AdminUserListView.as_view(), name='admin-user-list'),
     path('admin/users/<int:pk>/', AdminUserListView.as_view(), name='admin-user'),
     path('admin/users/<int:pk>/toggle-status/', AdminUserListView.as_view(), name='admin-user-status'),
@@ -117,7 +110,6 @@ urlpatterns = [
     path('admin/schools/', AdminSchoolListView.as_view(), name='admin-schools'),
     path('admin/enrollments/', AdminEnrollmentListView.as_view(), name='admin-enrollments'),
 
-    # Include the router URLs for caretaker profiles
     path('api/', include(router.urls)),
   
 ]

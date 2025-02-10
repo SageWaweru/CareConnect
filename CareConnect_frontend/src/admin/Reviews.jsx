@@ -33,7 +33,7 @@ const Reviews = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md">
+    <div className="p-6 bg-alabaster  rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Caretaker Reviews</h2>
 
       <div className="mb-4 flex items-center space-x-2">
@@ -46,13 +46,13 @@ const Reviews = () => {
         />
         <button
           onClick={handleFilter}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="bg-coral text-white px-4 py-2 rounded hover:bg-emerald-800"
         >
           Search
         </button>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300">
+      <table className="w-full border-collapse bg-white border border-gray-300">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">ID</th>
