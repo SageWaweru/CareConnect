@@ -39,26 +39,26 @@ const Applications = () => {
         <table className="w-full mt-4 bg-white shadow rounded-lg table-auto">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-3 text-left">Id</th>
-              <th className="p-3 text-left">Job Title</th>
-              <th className="p-3 text-left">Job Id</th>
-              <th className="p-3 text-left">Applicant</th>
-              <th className="p-3 text-left">User Id</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Actions</th>
+              <th className="border p-3 text-left">Id</th>
+              <th className="border p-3 text-left">Job Title</th>
+              <th className="border p-3 text-left">Job Id</th>
+              <th className="border p-3 text-left">Applicant</th>
+              <th className="border p-3 text-left">User Id</th>
+              <th className="border p-3 text-left">Status</th>
+              <th className="border p-3 text-left">Actions</th>
 
             </tr>
           </thead>
           <tbody>
             {applications.map((application) => (
               <tr key={application.id} className="border-b">
-                <td className="p-3 text-center">{application.id}</td>
-                <td className="p-3">{application.job_title}</td>
-                <td className="p-3">{application.job}</td>
-                <td className="p-3">{application.caretaker}</td>
-                <td className="p-3">{application.caretaker_user_id}</td>
-                <td className="p-3">{application.status}</td>
-                <td className="p-3 text-center">
+                <td className="border p-3 text-center">{application.id}</td>
+                <td className="border p-3">{application.job_title}</td>
+                <td className="border p-3">{application.job}</td>
+                <td className="border p-3">{application.caretaker}</td>
+                <td className="border p-3">{application.caretaker_user_id}</td>
+                <td className="border p-3">{application.status}</td>
+                <td className="border p-3 text-center">
                 <button
                   className="px-4 py-2 text-white rounded bg-coral hover:bg-emerald-800"
                   onClick={() => Delete(application.id)}

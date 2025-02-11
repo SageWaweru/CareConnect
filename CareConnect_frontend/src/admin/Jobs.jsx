@@ -7,54 +7,6 @@ const Jobs = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   
-  const [newJob, setNewJob] = useState({
-    title:"",
-    description:"",
-    location:"",
-    required_skills:"",
-    rate_type: "",
-    duration:"",
-    status:"",
-    pay_rate: 0
-
-  });
-  const [showForm, setShowForm] = useState(false); // State to toggle form visibil
-  
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-        alert("User is not authenticated");
-        return;
-    }
-
-    try {
-        const response = await axios.post(
-            "http://127.0.0.1:8000/api/admin/job-posts/",
-            newJob,
-            { headers: { Authorization: `Token ${token}` } }
-        );
-
-        console.log("Job posted successfully:", response.data);
-        
-        setJobs((prevJobs) => [...prevJobs, response.data]);
-
-        setNewJob({
-            title: "",
-            description: "",
-            location: "",
-            required_skills: "",
-            rate_type: "",
-            duration: "",
-            status: "",
-            pay_rate: 0,
-        });
-    } catch (error) {
-        console.error("Error posting job:", error.response?.data || error.message);
-    }
-};
-
   useEffect(() => {
     axios
       .get("http://127.0.0.1:8000/api/admin/job-posts/")
@@ -74,15 +26,6 @@ const Jobs = () => {
         setError("Error updating job status: " + (error.response ? error.response.data : error.message));
       });
   };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewJob((prevJob) => ({
-      ...prevJob,
-      [name]: value,
-    }));
-  };
-
 
   const Delete = (id) => {
     axios
@@ -104,136 +47,6 @@ const Jobs = () => {
     <div className="p-6 bg-beige text-gray-700 min-h-screen">
       <h2 className="text-2xl font-bold">Job Management</h2>
       {error && <div className="text-red-500">{error}</div>} 
-      <button
-        onClick={() => setShowForm(!showForm)}
-        className="mt-6 mb-4 px-4 py-2 bg-emerald-800 text-white rounded hover:bg-coral"
-      >
-        {showForm ? "Cancel" : "Add New Job"}
-      </button>
-
-      {showForm && (
-        <form onSubmit={handleFormSubmit} className="mt-6 w-3/5 space-y-6 bg-white p-6 shadow-lg rounded-lg">
-                    <div className="mb-4">
-                        <label htmlFor="title" className="block text-gray-700 font-semibold">Job Title</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            value={newJob.title}
-                            onChange={handleInputChange}
-                            placeholder="Job Title"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label htmlFor="description" className="block text-gray-700 font-semibold">Job Description</label>
-                        <textarea
-                            id="description"
-                            name="description"
-                            value={newJob.description}
-                            onChange={handleInputChange}
-                            placeholder="Job Description"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label htmlFor="location" className="block text-gray-700 font-semibold">Location</label>
-                        <input
-                            type="text"
-                            id="location"
-                            name="location"
-                            value={newJob.location}
-                            onChange={handleInputChange}
-                            placeholder="Location"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                    </div>
-
-                    <div className="mb-4">
-                        <label htmlFor="requiredSkills" className="block text-gray-700 font-semibold">Required Skills</label>
-                        <textarea
-                            id="required_skills"
-                            name="required_skills"
-                            value={newJob.required_skills}
-                            onChange={handleInputChange}
-                            placeholder="List of Required Skills"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                    </div>
-
-                    <div className="mb-4 grid grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="payRate" className="block text-gray-700 font-semibold">Pay Rate</label>
-                            <input
-                                type="number"
-                                id="pay_rate"
-                                name="pay_rate"
-                                value={newJob.pay_rate}                                onChange={handleInputChange}
-                                placeholder="Pay Rate"
-                                required
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="rateType" className="block text-gray-700 font-semibold">Rate Type</label>
-                            <select
-                            id="rate_type"
-                            name="rate_type"
-                            value={newJob.rate_type}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        >
-                            <option value="">Select Rate Type</option> 
-                            <option value="hour">Hour</option>
-                            <option value="day">Day</option>
-                            <option value="week">Week</option>
-                        </select>
-                        </div>
-                    </div>
-
-                    <div className="mb-4">
-                        <label htmlFor="duration" className="block text-gray-700 font-semibold">Job Duration</label>
-                        <input
-                            type="text"
-                            id="duration"
-                            name="duration"
-                            value={newJob.duration}
-                            onChange={handleInputChange}
-                            placeholder="Job Duration (e.g., 3 weeks)"
-                            required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        />
-                    </div>
-
-                    <div className="mb-6">
-                        <label htmlFor="status" className="block text-gray-700 font-semibold">Job Status</label>
-                        <select
-                            id="status"
-                            name="status"
-                            value={newJob.status}
-                            onChange={handleInputChange}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                        >
-                            <option value="Open">Open</option>
-                            <option value="Closed">Closed</option>
-                            <option value="In Progress">In Progress</option>
-                        </select>
-                    </div>
-
-                    <button
-                        type="submit"
-                        className="w-full py-3 px-4 bg-coral text-white font-semibold rounded-md hover:bg-emerald-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                    >
-                        Add Job
-                    </button>
-        </form>
-      )}
 
       <table className="w-full mt-4 bg-white shadow rounded-lg table-auto">
         <thead>

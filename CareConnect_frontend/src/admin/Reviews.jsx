@@ -33,7 +33,7 @@ const Reviews = () => {
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (
-    <div className="p-6 bg-alabaster  rounded-lg shadow-md">
+    <div className="p-6 bg-alabaster min-h-screen rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Caretaker Reviews</h2>
 
       <div className="mb-4 flex items-center space-x-2">

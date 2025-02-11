@@ -69,7 +69,7 @@ const Users = () => {
   };
 
   return (
-    <div className="p-6 bg-beige text-gray-700">
+    <div className="p-6 bg-beige min-h-screen text-gray-700">
       <h2 className="text-2xl font-bold">User Management</h2>
 
       <button
