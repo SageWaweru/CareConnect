@@ -6,7 +6,6 @@ const CoursesPage = () => {
   const { schoolId } = useParams();
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [courses, setCourses] = useState([]);
-  const [schoolName, setSchoolName] = useState("");
 
   const enrollInCourse = (courseId) => {
     setSelectedCourseId(courseId);
@@ -14,17 +13,15 @@ const CoursesPage = () => {
 
   const handleEnrollSuccess = (data) => {
     setSelectedCourseId(null);
-    console.log("Enrollment successful:", data);
     alert("Your enroll request has been sent successfully.");
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     const fetchCourses = async () => {
       try {
         const courseResponse = await fetch(`http://127.0.0.1:8000/api/courses/school/${schoolId}/`);
         if (!courseResponse.ok) throw new Error("Failed to fetch courses");
         const courseData = await courseResponse.json();
-        console.log("Fetched Courses:", courseData);
         setCourses(courseData);
       } catch (error) {
         console.error("Error fetching courses:", error);
@@ -42,13 +39,13 @@ useEffect(() => {
           <p>No courses available</p>
         ) : (
           courses.map((course) => (
-            <div key={course.id} className="course-card border p-2 my-2 p-4 bg-gray-100 rounded shadow">
+            <div key={course.id} className="border p-4 bg-gray-100 rounded shadow">
               <h3 className="font-semibold text-xl">{course.title}</h3>
               <p className="m-2"><strong>Description:</strong> {course.description}</p>
               <p className="m-2"><strong>Duration:</strong> {course.duration}</p>
               <p className="m-2"><strong>Price:</strong> Ksh {course.price}</p>
               <p className="m-2"><strong>Status:</strong> {course.status}</p>
-              
+
               {course.status === "open" ? (
                 <button
                   className="bg-coral text-white hover:bg-emerald-800 px-4 w-full py-2 rounded"
@@ -57,10 +54,7 @@ useEffect(() => {
                   Enroll
                 </button>
               ) : (
-                <button
-                  disabled
-                  className="bg-coral text-white px-4 w-full py-2 rounded"
-                >
+                <button disabled className="bg-gray-400 text-white px-4 w-full py-2 rounded">
                   Course is closed for enrollment
                 </button>
               )}
@@ -68,10 +62,19 @@ useEffect(() => {
           ))
         )}
       </div>
-      
+
       {selectedCourseId && (
-        <EnrollForm courseId={selectedCourseId} onEnrollSuccess={handleEnrollSuccess} 
-        />
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="relative bg-white p-6 w-3/5 shadow-md rounded-md">
+            <button
+              onClick={() => setSelectedCourseId(null)}
+              className="absolute top-3 right-3 text-coral hover:text-emerald-800 text-xl"
+            >
+              ✖
+            </button>
+            <EnrollForm courseId={selectedCourseId} onEnrollSuccess={handleEnrollSuccess} />
+          </div>
+        </div>
       )}
     </div>
   );

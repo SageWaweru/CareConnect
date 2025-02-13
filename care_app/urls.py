@@ -20,6 +20,7 @@ from . views import (
     VocationalSchoolView, 
     CourseView, 
     ApproveEnrollmentView,
+    RejectEnrollmentView,
     EnrollmentAPIView,
     VocationalSchoolListView,
     SchoolCoursesView,
@@ -86,7 +87,8 @@ urlpatterns = [
     path('courses/<int:course_id>/enroll/', EnrollmentAPIView.as_view(), name='enroll-course'),
     path("enrollments/school/<int:school_id>/", SchoolEnrollmentsView.as_view(), name="school-enrollments"),
     path("approve-enrollment/<int:enrollment_id>/", ApproveEnrollmentView.as_view(), name="approve-enrollment"),
-
+    path("reject-enrollment/<int:enrollment_id>/", RejectEnrollmentView.as_view(), name="reject-enrollment"),
+ 
     # Admin URLs
     path('admin/users/', AdminUserListView.as_view(), name='admin-user-list'),
     path('admin/users/<int:pk>/', AdminUserListView.as_view(), name='admin-user'),

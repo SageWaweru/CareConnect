@@ -55,7 +55,22 @@ const Enrollments = () => {
       console.error("Error approving enrollment:", error);
     }
   };
-
+  const handleRejectEnrollment = async (enrollmentId) => {
+    try {
+      const token = getToken();
+      await axios.patch(`http://127.0.0.1:8000/api/reject-enrollment/${enrollmentId}/`, null, {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+      });
+  
+      setEnrollments(enrollments.filter((enrollment) => enrollment.id !== enrollmentId));
+      alert("Enrollment rejected.");
+    } catch (error) {
+      console.error("Error rejecting enrollment:", error);
+    }
+  };
+  
   return (
     <div className="p-6 bg-beige w-full min-h-screen">
       <div className="bg-white w-full mx-auto p-6 rounded-lg shadow-lg text-gray-700">
@@ -66,28 +81,35 @@ const Enrollments = () => {
           <p>No enrollments found.</p>
         ) : (
 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-  {enrollments.length > 0 ? (
-    enrollments.map((enrollment) => (
+{enrollments.filter((enrollment) => !enrollment.approved).length > 0 ? (
+  enrollments
+    .filter((enrollment) => !enrollment.approved) 
+    .map((enrollment) => (
       <div key={enrollment.id} className="border p-4 rounded-md shadow bg-alabaster">
         <p><strong>Name:</strong> {enrollment.name}</p>
         <p><strong>Email:</strong> {enrollment.email}</p>
         <p><strong>Age:</strong> {enrollment.age}</p>
         <p><strong>Course:</strong> {enrollment.course_title}</p>
-        <p><strong>Status:</strong> {enrollment.approved ? "Approved" : "Pending"}</p>
+        <p><strong>Status:</strong> Pending</p>
 
-        {!enrollment.approved && (
-          <button
-            onClick={() => handleApproveEnrollment(enrollment.id)}
-            className="bg-coral hover:bg-emerald-800 text-white px-4 py-2 rounded mt-2"
-          >
-            Approve Enrollment
-          </button>
-        )}
+        <button
+          onClick={() => handleApproveEnrollment(enrollment.id)}
+          className="bg-emerald-800 hover:bg-emerald-600 text-white px-4 py-2 rounded mt-2"
+        >
+          Approve Enrollment
+        </button>
+
+        <button
+          onClick={() => handleRejectEnrollment(enrollment.id)}
+          className="bg-coral hover:bg-red-700 text-white px-4 py-2 rounded mt-2 ml-2"
+        >
+          Reject Enrollment
+        </button>
       </div>
     ))
-  ) : (
-    <p>No enrollments found.</p>
-  )}
+) : (
+  <p>No pending enrollments.</p>
+)}
 </div>
         )}
       </div>

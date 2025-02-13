@@ -15,11 +15,11 @@ const Users = () => {
     axios.get("http://127.0.0.1:8000/api/admin/users/").then((res) => setUsers(res.data));
   }, []);
 
-  const toggleUserStatus = (id) => {
-    axios.patch(`http://127.0.0.1:8000/api/admin/users/${id}/toggle-status/`).then(() => {
-      setUsers(users.map(user => user.id === id ? { ...user, is_superuser: !user.is_superuser } : user));
-    });
-  };
+  // const toggleUserStatus = (id) => {
+  //   axios.patch(`http://127.0.0.1:8000/api/admin/users/${id}/toggle-status/`).then(() => {
+  //     setUsers(users.map(user => user.id === id ? { ...user, is_superuser: !user.is_superuser } : user));
+  //   });
+  // };
 
   const Delete = (id) => {
     axios
@@ -147,7 +147,7 @@ const Users = () => {
             <th className="border p-2 text-left">Username</th>
             <th className="border p-2 text-left">Email</th>
             <th className="border p-2 text-left">Role</th>
-            <th className="border p-2 text-left">Superuser</th>
+            <th className="border p-2 text-left">Super User</th>
             <th className="border p-2 text-left">Actions</th>
           </tr>
         </thead>
@@ -157,20 +157,14 @@ const Users = () => {
               <td className="border p-2">{user.id}</td>
               <td className="border p-2">{user.username}</td>
               <td className="border p-2">{user.email}</td>
-              <td className="border p-2">{user.role}</td>
               <td className="border p-2">{user.is_superuser ? "True" : "False"}</td>
+              <td className="border p-2">{user.role}</td>
               <td className="border p-2 flex space-x-2">
                 <button
                   className="px-3 py-1 text-white rounded bg-coral hover:bg-emerald-800"
                   onClick={() => Delete(user.id)}
                 >
                   Delete
-                </button>
-                <button
-                  className="px-3 py-1 text-white rounded bg-coral hover:bg-emerald-800"
-                  onClick={() => toggleUserStatus(user.id)}
-                >
-                  {user.is_superuser ? "Remove superuser" : "Make Superuser"}
                 </button>
               </td>
             </tr>

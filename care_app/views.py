@@ -12,6 +12,8 @@ from rest_framework import viewsets, permissions, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.core.mail import send_mail
+
 
 
 
@@ -401,7 +403,9 @@ class VocationalSchoolView(APIView):
         print("Authenticated User:", request.user) 
         print("User Role:", getattr(request.user, "role", None))
 
-        data = request.data.copy()
+        files = request.FILES if request.FILES else None
+
+        data = request.data.dict() if hasattr(request.data, "dict") else request.data
         data["manager"] = request.user.id 
 
         serializer = VocationalSchoolSerializer(data=data, context={"request": request})
@@ -569,17 +573,134 @@ class ApproveEnrollmentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, enrollment_id):
-        if request.user.role != "vocational_school":
-            return Response({"error": "Only school managers can approve enrollments"}, status=status.HTTP_403_FORBIDDEN)
+        if getattr(request.user, "role", None) != "vocational_school":
+            return Response(
+                {"error": "Only school managers can approve enrollments"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
-        try:
-            enrollment = Enrollment.objects.get(id=enrollment_id, course__school=request.user.school)
-        except Enrollment.DoesNotExist:
-            return Response({"error": "Enrollment not found"}, status=status.HTTP_404_NOT_FOUND)
+        enrollment = get_object_or_404(
+            Enrollment, id=enrollment_id, course__school=request.user.school
+        )
 
         enrollment.approved = True
         enrollment.save()
+
+        plain_message = f"""Dear {enrollment.name},
+
+        We are delighted to inform you that your enrollment for the course "{enrollment.course.title}" at {enrollment.course.school.name} has been approved.
+
+        At {enrollment.course.school.name}, we are committed to providing an outstanding academic experience. You will soon receive further details regarding your course schedule, orientation, and additional pertinent information.
+
+        Thank you for choosing {enrollment.course.school.name} as your educational partner.
+
+        Sincerely,
+        The Admissions Team at {enrollment.course.school.name}
+        """
+
+        html_message = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <p>Dear {enrollment.name},</p>
+            <p>
+            We are delighted to inform you that your enrollment for the course 
+            <strong>"{enrollment.course.title}"</strong> at <strong>{enrollment.course.school.name}</strong> has been approved.
+            </p>
+            <p>
+            At {enrollment.course.school.name}, we are committed to providing an outstanding academic experience. 
+            You will soon receive further details regarding your course schedule, orientation, and additional pertinent information.
+            </p>
+            <p>
+            Thank you for choosing {enrollment.course.school.name} as your educational partner.
+            </p>
+            <p>
+            Sincerely,<br>
+            The Admissions Team at {enrollment.course.school.name}
+            </p>
+        </body>
+        </html>
+        """
+
+        send_mail(
+            subject="Enrollment Approved",
+            message=plain_message,  
+            from_email="admin@careconnect.com",
+            recipient_list=[enrollment.email],
+            fail_silently=False,
+            html_message=html_message,  
+        )
+
         return Response({"message": "Enrollment approved"}, status=status.HTTP_200_OK)
+
+
+class RejectEnrollmentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, enrollment_id):
+        if getattr(request.user, "role", None) != "vocational_school":
+            return Response(
+                {"error": "Only school managers can reject enrollments"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        enrollment = get_object_or_404(
+            Enrollment, id=enrollment_id, course__school=request.user.school
+        )
+
+        student_name = enrollment.name
+        course_title = enrollment.course.title
+        school_name = enrollment.course.school.name
+        student_email = enrollment.email
+
+        enrollment.delete()
+
+        plain_message = f"""Dear {student_name},
+
+        Thank you for your interest in the course "{course_title}" at {school_name}.
+        After careful consideration, we regret to inform you that your enrollment application has not been approved at this time.
+
+        If you have any questions or need further clarification, please contact our admissions office.
+
+        Sincerely,
+        The Admissions Team at {school_name}
+        """
+
+        html_message = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <p>Dear {student_name},</p>
+            <p>
+            Thank you for your interest in the course <strong>"{course_title}"</strong> at <strong>{school_name}</strong>.
+            After careful consideration, we regret to inform you that your enrollment application has not been approved at this time.
+            </p>
+            <p>
+            We understand that this decision may be disappointing. If you have any questions or need further clarification,
+            please do not hesitate to contact our admissions office.
+            </p>
+            <p>
+            We appreciate your interest and encourage you to explore other opportunities.
+            </p>
+            <p>Sincerely,<br>
+            The Admissions Team at {school_name}
+            </p>
+        </body>
+        </html>
+        """
+
+        send_mail(
+            subject="Enrollment Rejected",
+            message=plain_message,  
+            from_email="admin@careconnect.com",
+            recipient_list=[student_email],
+            fail_silently=False,
+            html_message=html_message,  
+        )
+
+        return Response(
+            {"message": "Enrollment rejected and removed"},
+            status=status.HTTP_200_OK
+        )
+
 
 class AdminUserListView(APIView):
     def get(self, request):

@@ -5,19 +5,13 @@ const EnrollForm = ({ courseId, onEnrollSuccess }) => {
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null); 
 
-    const userDetails = {
-      name,
-      email,
-      age,
-    };
-      
+    const userDetails = { name, email, age };
+
     try {
       const response = await fetch(`http://127.0.0.1:8000/api/courses/${courseId}/enroll/`, {
         method: "POST",
@@ -33,7 +27,7 @@ const EnrollForm = ({ courseId, onEnrollSuccess }) => {
         alert(errorData.detail || "Something went wrong.");
       } else {
         const data = await response.json();
-        onEnrollSuccess(data); 
+        onEnrollSuccess(data);
         setName("");
         setEmail("");
         setAge("");
@@ -46,15 +40,9 @@ const EnrollForm = ({ courseId, onEnrollSuccess }) => {
   };
 
   return (
-    <div className="p-6 bg-white w-3/5 shadow-md rounded-md">
-        <span role="button"
-          className="float float-right text-coral hover:text-emerald-800 text-xl"
-        >
-         ✖
-        </span>
-        <br />
+    <div>
       <h2 className="text-2xl font-semibold mb-4">Enroll in Course</h2>
-      
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium">Name</label>

@@ -208,8 +208,14 @@ function CustomerJobApplications() {
               return (
                 <div key={application.id} className="mb-4 p-4 border border-gray-300 bg-alabaster rounded-md shadow-sm">
                   <h3 className="text-xl font-semibold text-emerald-dark">Job: {application.job_title}</h3>
-                  <p className="mt-2 font-semibold">Applicant: {application.caretaker}</p>
-                  <p className="mt-2 font-semibold">Status: {application.status}</p>
+                  <p className="mt-2 font-semibold italic">Applicant: {application.caretaker}</p>
+                  <p className="mt-2 font-semibold  italic">{application.cover_letter ? (
+                  <p className="mt-2 font-semibold italic">Cover Letter: {application.cover_letter}</p>
+                ) : (
+                  <p className="mt-2 font-semibold italic text-gray-500">No cover letter provided</p>
+                )}
+                </p>
+                  <p className="mt-2 font-semibold italic ">Status: {application.status}</p>
                   {application.status === "Pending" && (
                     <>
                     <button
