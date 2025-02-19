@@ -27,8 +27,16 @@ const CourseManagement = () => {
       .get(`http://127.0.0.1:8000/api/courses/school/${schoolId}`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
-      .then((res) => setCourses(res.data))
-      .catch((err) => console.error("Error fetching courses:", err));
+      .then((res) => {
+        console.log("API Response for Courses:", res.data);
+  
+        if (Array.isArray(res.data)) {
+          setCourses(res.data);
+        } else {
+          console.error("Unexpected response format:", res.data);
+          setCourses([]); 
+        }
+      })            .catch((err) => console.error("Error fetching courses:", err));
   }, [schoolId]); 
 
   const handleChange = (e) => {
