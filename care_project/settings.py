@@ -30,9 +30,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -57,9 +57,9 @@ INSTALLED_APPS = [
 CHANNEL_LAYERS = { "default":
                    { "BACKEND": "channels_redis.core.RedisChannelLayer", "CONFIG": { "hosts": [("127.0.0.1", 6379)], }, }, }
 CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': config('REDIS_URL', default='redis://localhost:6379/1'),
     }
 }
 
@@ -73,7 +73,14 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
 }
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app/",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app/",
+]
 CORS_ALLOW_HEADERS = [
     'Authorization',
     'Content-Type',
@@ -122,20 +129,20 @@ ASGI_APPLICATION = 'care_project.asgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME':'careconnectdb',
-        'USER':'careappuser',
-        'PASSWORD':config('DATABASE_PASSWORD'),
-        'HOST':'localhost',
-        'PORT':'5432'
-    }
-}
-
-# DATABASES={
-#     'default': dj_database_url.parse("postgresql://sage_ln3y_user:sSy9KAnUxP7bkBbCGkH1exXZJkUcOPDL@dpg-cu3nvj9u0jms73dmodo0-a.oregon-postgres.render.com/sage_ln3y")
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME':'careconnectdb',
+#         'USER':'careappuser',
+#         'PASSWORD':config('DATABASE_PASSWORD'),
+#         'HOST':'localhost',
+#         'PORT':'5432'
+#     }
 # }
+
+DATABASES={
+    'default': dj_database_url.parse(config('EXTERNAL'))
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
