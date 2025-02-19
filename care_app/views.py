@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import status
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
@@ -15,7 +16,8 @@ from django.db.models import Q
 from django.core.mail import send_mail
 
 
-
+def index(request):
+    return render(request, "dist/index.html")
 
 
 User = get_user_model()
