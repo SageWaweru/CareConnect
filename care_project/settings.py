@@ -16,6 +16,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import os
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -132,6 +133,9 @@ DATABASES = {
     }
 }
 
+# DATABASES={
+#     'default': dj_database_url.parse("postgresql://sage_ln3y_user:sSy9KAnUxP7bkBbCGkH1exXZJkUcOPDL@dpg-cu3nvj9u0jms73dmodo0-a.oregon-postgres.render.com/sage_ln3y")
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

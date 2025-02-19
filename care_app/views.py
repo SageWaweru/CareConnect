@@ -358,6 +358,11 @@ class JobApplicationListCreateAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+from django.core.mail import send_mail
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
 class JobApplicationDetailUpdateAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -365,23 +370,83 @@ class JobApplicationDetailUpdateAPIView(APIView):
         try:
             application = JobApplication.objects.get(id=application_id)
         except JobApplication.DoesNotExist:
-            return Response({"detail": "Application not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "Application not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
         if application.job.customer != request.user:
-            return Response({"detail": "Unauthorized to update this application."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "Unauthorized to update this application."},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
         new_status = request.data.get("status")
         if new_status not in ["Pending", "Hired", "Rejected"]:
-            return Response({"detail": "Invalid status value."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Invalid status value."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         application.status = new_status
         application.save()
+
+        caretaker_email = application.caretaker.email
+        caretaker_name = (
+            application.caretaker.get_full_name()
+            if hasattr(application.caretaker, "get_full_name")
+            else str(application.caretaker)
+        )
 
         if new_status == "Hired":
             application.job.status = "In Progress"
             application.job.save()
 
-        return Response({"message": f"Application status updated to {new_status}."}, status=status.HTTP_200_OK)
+            subject = "Job Application Approved"
+            message = f"""Dear {caretaker_name},
+
+Congratulations! We are delighted to inform you that your application for the caretaker position for the job "{application.job.title}" has been approved.
+
+Your skills and dedication have distinguished you from other applicants, and we look forward to welcoming you to our team. Further details regarding your role, next steps, and onboarding process will be communicated to you shortly.
+
+Thank you for your interest in this opportunity.
+
+Best regards,
+{application.job.customer.get_full_name() if hasattr(application.job.customer, 'get_full_name') else str(application.job.customer)}
+"""
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email="admin@careconnect.com",
+                recipient_list=[caretaker_email],
+                fail_silently=False,
+            )
+
+        elif new_status == "Rejected":
+            subject = "Job Application Update"
+            message = f"""Dear {caretaker_name},
+
+Thank you for your interest in the caretaker position for the job "{application.job.title}". After careful consideration, we regret to inform you that your application has not been successful at this time.
+
+We appreciate the effort you put into your application and encourage you to apply for future opportunities that match your skills and experience.
+
+We wish you every success in your future endeavors.
+
+Sincerely,
+{application.job.customer.get_full_name() if hasattr(application.job.customer, 'get_full_name') else str(application.job.customer)}
+"""
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email="admin@careconnect.com",
+                recipient_list=[caretaker_email],
+                fail_silently=False,
+            )
+
+        return Response(
+            {"message": f"Application status updated to {new_status}."},
+            status=status.HTTP_200_OK
+        )
 
 class VocationalSchoolView(APIView):
     permission_classes = []

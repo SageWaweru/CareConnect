@@ -13,7 +13,7 @@ const CoursesPage = () => {
 
   const handleEnrollSuccess = (data) => {
     setSelectedCourseId(null);
-    alert("Your enroll request has been sent successfully.");
+    alert("Your enroll request has been sent successfully. We shall get back to you in 24 hours.");
   };
 
   useEffect(() => {

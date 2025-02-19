@@ -69,7 +69,7 @@ function JobApplications() {
         }
       );
       setHasApplied(prevState => ({ ...prevState, [selectedJob.id]: true }));
-      alert("Applied successfully!");
+      alert("Applied successfully! We shall get back to you soon!");
       closeModal();
     } catch (error) {
       if (error.response && error.response.status === 400) {
