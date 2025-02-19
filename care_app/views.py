@@ -17,7 +17,7 @@ from django.core.mail import send_mail
 
 
 def index(request):
-    return render(request, "dist/index.html")
+    return render(request, "index.html")
 
 
 User = get_user_model()

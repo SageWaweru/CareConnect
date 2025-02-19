@@ -20,7 +20,7 @@ import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -30,7 +30,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["careconnect-1-aayd.onrender.com", "localhost", "127.0.0.1"]
 
@@ -74,13 +74,13 @@ REST_FRAMEWORK = {
     ],
 }
 # CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app/",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app",
+# ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app/",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app",
+# ]
 CORS_ALLOW_HEADERS = [
     'Authorization',
     'Content-Type',
@@ -89,7 +89,7 @@ CORS_ALLOW_HEADERS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise is now enabled
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -100,17 +100,19 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'care_project.urls'
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(BASE_DIR, "CareConnect_frontend", "dist")],  # This is fine
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -181,7 +183,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'   
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [ os.path.join(BASE_DIR, "CareConnect_frontend", "dist"),] 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "CareConnect_frontend", "dist", "assets"),
+]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
