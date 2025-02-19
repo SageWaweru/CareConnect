@@ -8,10 +8,13 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 """
 
 import os
+import sys
+
+# Add the project directory to the system path
+sys.path.append('/opt/render/project/src')
 
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'care_project.settings')
 
 application = get_wsgi_application()
-care_project/wsgi.py
