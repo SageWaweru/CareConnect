@@ -44,7 +44,6 @@ function CustomerJobApplications() {
         setJobs(customerJobs);
       } catch (error) {
         console.error("Error fetching applications and jobs:", error);
-        setError("Failed to load data. Please try again later.");
       }
     };
   

@@ -14,11 +14,15 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.core.mail import send_mail
+from django.http import HttpResponse
+from django.conf import settings
+import os
 
 
 def index(request):
-    return render(request, "index.html")
-
+    index_path = os.path.join(settings.BASE_DIR, "CareConnect_frontend/dist/index.html")
+    with open(index_path, "r") as f:
+        return HttpResponse(f.read())
 
 User = get_user_model()
 
