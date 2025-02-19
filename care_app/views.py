@@ -19,8 +19,13 @@ from django.conf import settings
 import os
 
 
+
 def index(request):
-    index_path = os.path.join(settings.BASE_DIR, "CareConnect_frontend/dist/index.html")
+    index_path = os.path.join(settings.BASE_DIR, "CareConnect_frontend", "dist", "index.html")
+    
+    if not os.path.exists(index_path):
+        return HttpResponse("Frontend build missing. Please rebuild the frontend.", status=500)
+
     with open(index_path, "r") as f:
         return HttpResponse(f.read())
 
