@@ -81,6 +81,13 @@ REST_FRAMEWORK = {
 # CSRF_TRUSTED_ORIGINS = [
 #     "https://care-connect-2iyrp18uu-sage-wawerus-projects.vercel.app",
 # ]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://careconnect-1-aayd.onrender.com",  
+]
+
+CORS_ALLOW_CREDENTIALS = True  
+
 CORS_ALLOW_HEADERS = [
     'Authorization',
     'Content-Type',
@@ -89,7 +96,7 @@ CORS_ALLOW_HEADERS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise is now enabled
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
