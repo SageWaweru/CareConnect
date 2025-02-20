@@ -19,14 +19,20 @@ const CaretakerProfiles = () => {
     axios
       .get(`${API_BASE_URL}/api/caretaker-profiles/`)
       .then((response) => {
-        setProfiles(response.data);
-        setFilteredProfiles(response.data);
+        console.log("API Response:", response.data);  
+  
+        const data = Array.isArray(response.data) ? response.data : [];
+  
+        setProfiles(data);
+        setFilteredProfiles(data);
       })
       .catch((error) => {
-        console.error("There was an error fetching the profiles!", error);
+        console.error("Error fetching profiles:", error);
+        setProfiles([]);  
+        setFilteredProfiles([]);
       });
   }, []);
-
+  
   useEffect(() => {
     const fetchReviews = async () => {
       if (profiles.length === 0) return;
