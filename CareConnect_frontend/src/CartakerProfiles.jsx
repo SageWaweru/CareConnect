@@ -20,11 +20,14 @@ const CaretakerProfiles = () => {
       .get(`${API_BASE_URL}/api/caretaker-profiles/`)
       .then((response) => {
         console.log("API Response:", response.data);  
-  
-        const data = Array.isArray(response.data) ? response.data : [];
-  
-        setProfiles(data);
-        setFilteredProfiles(data);
+        if (Array.isArray(response.data)) {
+          setProfiles(response.data);
+          setFilteredProfiles(response.data);
+        } else {
+          console.error("Unexpected API response:", response.data);
+          setProfiles([]);
+          setFilteredProfiles([]);
+        }
       })
       .catch((error) => {
         console.error("Error fetching profiles:", error);
