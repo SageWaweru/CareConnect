@@ -11,9 +11,18 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://careconnect-1-aayd.onrender.com', 
+        changeOrigin: true,
+        secure: false, 
+      },
+    },
+  },
   build: {
-    outDir: 'dist',  // Ensure build goes to dist
-    assetsDir: 'static',  // Change from 'assets' to 'static'
-    manifest: true, // Generate a manifest for Django
+    outDir: 'dist',
+    assetsDir: 'static',
+    manifest: true,
   },
 });
