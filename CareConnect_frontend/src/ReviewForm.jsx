@@ -12,6 +12,8 @@ const ReviewForm = () => {
     const [reviewText, setReviewText] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
+    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
         
 
     useEffect(() => {
@@ -24,7 +26,7 @@ const ReviewForm = () => {
             return;
         }
     
-        axios.get(`http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`, {
+        axios.get(`${API_BASE_URL}/api/caretaker/${caretakerId}/reviews/`, {
             headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
@@ -54,7 +56,6 @@ const ReviewForm = () => {
         const token = localStorage.getItem("accessToken");
         const userId = localStorage.getItem("userId");
     
-        // Prevent duplicate submission
         const existingReview = reviews.find(review => review.user === userId);
         if (existingReview) {
             alert("You have already reviewed this caretaker.");
@@ -63,7 +64,7 @@ const ReviewForm = () => {
     
         try {
             const response = await axios.post(
-                `http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`,
+                `${API_BASE_URL}/api/caretaker/${caretakerId}/reviews/`,
                 {
                     rating,
                     review_text: reviewText || "No additional comments",

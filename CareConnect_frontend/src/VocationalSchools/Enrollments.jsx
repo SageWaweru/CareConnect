@@ -5,13 +5,15 @@ const Enrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [schoolId, setSchoolId] = useState(null);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   const getToken = () => localStorage.getItem("accessToken");
 
   useEffect(() => {
     const token = getToken();
     axios
-      .get("http://127.0.0.1:8000/api/school/", {
+      .get(`${API_BASE_URL}/api/school/`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
       .then((res) => setSchoolId(res.data.id))
@@ -23,7 +25,7 @@ const Enrollments = () => {
     const fetchEnrollments = async () => {
       try {
         const token = getToken();
-        const response = await axios.get(`http://127.0.0.1:8000/api/enrollments/school/${schoolId}`, {
+        const response = await axios.get(`${API_BASE_URL}/api/enrollments/school/${schoolId}`, {
           headers: {
             Authorization: token ? `Bearer ${token}` : "",
           },
@@ -42,7 +44,7 @@ const Enrollments = () => {
   const handleApproveEnrollment = async (enrollmentId) => {
     try {
       const token = getToken();
-      await axios.patch(`http://127.0.0.1:8000/api/approve-enrollment/${enrollmentId}/`, null, {
+      await axios.patch(`${API_BASE_URL}/api/approve-enrollment/${enrollmentId}/`, null, {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
         },
@@ -58,7 +60,7 @@ const Enrollments = () => {
   const handleRejectEnrollment = async (enrollmentId) => {
     try {
       const token = getToken();
-      await axios.patch(`http://127.0.0.1:8000/api/reject-enrollment/${enrollmentId}/`, null, {
+      await axios.patch(`${API_BASE_URL}/api/reject-enrollment/${enrollmentId}/`, null, {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
         },

@@ -5,6 +5,8 @@ const Students = () => {
     const [enrollments, setEnrollments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [schoolId, setSchoolId] = useState(null);
+    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
     const getToken = () => localStorage.getItem("accessToken");
 
@@ -13,7 +15,7 @@ const Students = () => {
         if (!token) return;
 
         axios
-            .get("http://127.0.0.1:8000/api/school/", {
+            .get(`${API_BASE_URL}/api/school/`, {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then((res) => setSchoolId(res.data.id))
@@ -27,7 +29,7 @@ const Students = () => {
             try {
                 const token = getToken();
                 const response = await axios.get(
-                    `http://127.0.0.1:8000/api/enrollments/school/${schoolId}`,
+                   `${API_BASE_URL}/api/enrollments/school/${schoolId}`,
                     {
                         headers: {
                             Authorization: token ? `Bearer ${token}` : "",

@@ -7,11 +7,13 @@ const CaregiverChats = () => {
   const [usernames, setUsernames] = useState({});
   const navigate = useNavigate();
   const loggedInUserId = localStorage.getItem("userId");
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
   
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/messages/", {
+      .get(`${API_BASE_URL}/api/messages/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -71,7 +73,7 @@ const CaregiverChats = () => {
     try {
       const responses = await Promise.all(
         userIds.map((id) =>
-          axios.get(`http://localhost:8000/api/users/${id}/`, {
+          axios.get(`${API_BASE_URL}/api/users/${id}/`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },

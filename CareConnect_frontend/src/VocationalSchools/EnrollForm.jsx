@@ -5,6 +5,8 @@ const EnrollForm = ({ courseId, onEnrollSuccess }) => {
   const [email, setEmail] = useState("");
   const [age, setAge] = useState("");
   const [loading, setLoading] = useState(false);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,7 +15,7 @@ const EnrollForm = ({ courseId, onEnrollSuccess }) => {
     const userDetails = { name, email, age };
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/courses/${courseId}/enroll/`, {
+      const response = await fetch(`${API_BASE_URL}/api/courses/${courseId}/enroll/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

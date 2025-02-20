@@ -12,9 +12,11 @@ const CaretakerProfileDetails = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const navigate = useNavigate();
   const customerId = localStorage.getItem("userId");
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/api/caretaker-profiles/${id}/`)
+      .get(`${API_BASE_URL}/api/caretaker-profiles/${id}/`)
       .then((response) => {
         setProfile(response.data);
       })
@@ -29,7 +31,7 @@ const CaretakerProfileDetails = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/api/caretaker/${id}/reviews/`
+          `${API_BASE_URL}/api/caretaker/${id}/reviews/`
         );
         const reviews = response.data;
         if (reviews.length > 0) {

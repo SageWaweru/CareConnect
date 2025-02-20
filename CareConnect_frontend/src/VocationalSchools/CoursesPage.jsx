@@ -6,6 +6,8 @@ const CoursesPage = () => {
   const { schoolId } = useParams();
   const [selectedCourseId, setSelectedCourseId] = useState(null);
   const [courses, setCourses] = useState([]);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   const enrollInCourse = (courseId) => {
     setSelectedCourseId(courseId);
@@ -19,7 +21,7 @@ const CoursesPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const courseResponse = await fetch(`http://127.0.0.1:8000/api/courses/school/${schoolId}/`);
+        const courseResponse = await fetch(`${API_BASE_URL}/api/courses/school/${schoolId}/`);
         if (!courseResponse.ok) throw new Error("Failed to fetch courses");
         const courseData = await courseResponse.json();
         setCourses(courseData);

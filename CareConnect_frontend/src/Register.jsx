@@ -7,6 +7,8 @@ const Register = () => {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' , role: 'customer',});
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +16,7 @@ const Register = () => {
       console.log('Form Data:', formData);
 
       const response = await axios.post(
-        'http://127.0.0.1:8000/api/register/',
+        `${API_BASE_URL}/api/register/`,
         formData,
         {
           headers: {

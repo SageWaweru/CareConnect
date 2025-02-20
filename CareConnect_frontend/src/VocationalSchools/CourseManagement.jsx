@@ -7,13 +7,15 @@ const CourseManagement = () => {
   const [schoolId, setSchoolId] = useState(null);
   const [editingCourse, setEditingCourse] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   const getToken = () => localStorage.getItem("accessToken");
 
   useEffect(() => {
     const token = getToken();
     axios
-      .get("http://127.0.0.1:8000/api/school/", {
+      .get(`${API_BASE_URL}/api/school/`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
       .then((res) => setSchoolId(res.data.id))
@@ -24,7 +26,7 @@ const CourseManagement = () => {
     if (!schoolId) return; 
     const token = getToken();
     axios
-      .get(`http://127.0.0.1:8000/api/courses/school/${schoolId}`, {
+      .get(`${API_BASE_URL}/api/courses/school/${schoolId}`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
       .then((res) => {
@@ -54,7 +56,7 @@ const CourseManagement = () => {
 
     if (editingCourse) {
       axios
-        .put(`http://127.0.0.1:8000/api/courses/${editingCourse.id}/`, courseData, {
+        .put(`${API_BASE_URL}/api/courses/${editingCourse.id}/`, courseData, {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         })
         .then((res) => {
@@ -65,7 +67,7 @@ const CourseManagement = () => {
         .catch((err) => console.error("Error editing course:", err.response?.data || err.message));
     } else {
       axios
-        .post("http://127.0.0.1:8000/api/courses/", courseData, {
+        .post(`${API_BASE_URL}/api/courses/`, courseData, {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         })
         .then((res) => {
@@ -80,7 +82,7 @@ const CourseManagement = () => {
     const token = getToken();
   
     axios
-      .patch(`http://127.0.0.1:8000/api/courses/${courseId}/toggle-status/`, {}, {
+      .patch(`${API_BASE_URL}/api/courses/${courseId}/toggle-status/`, {}, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
       .then((res) => {
@@ -102,7 +104,7 @@ const CourseManagement = () => {
   const handleDeleteCourse = (courseId) => {
     const token = getToken();
     axios
-      .delete(`http://127.0.0.1:8000/api/courses/${courseId}/`, {
+      .delete(`${API_BASE_URL}/api/courses/${courseId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => setCourses(courses.filter((course) => course.id !== courseId)))

@@ -58,11 +58,11 @@ urlpatterns = [
     path('update-user/<int:id>/', UpdateUserDetailsView.as_view(), name='update_user'),
     
     # Caretaker
-    path('api/caretaker-profiles/user/<int:user_id>/', CaretakerProfileDetailView.as_view(), name='caretaker-profile-detail'),
-    path("api/caretaker-profiles/<int:id>/", CaretakerProfileByIdView.as_view(), name="caretaker-profile-by-id"),
+    path('caretaker-profiles/user/<int:user_id>/', CaretakerProfileDetailView.as_view(), name='caretaker-profile-detail'),
+    path("caretaker-profiles/<int:id>/", CaretakerProfileByIdView.as_view(), name="caretaker-profile-by-id"),
     
     # Review path
-    path('api/caretaker/<int:caretaker_id>/reviews/', ReviewListCreateView.as_view(), name='caretaker-reviews'),
+    path('caretaker/<int:caretaker_id>/reviews/', ReviewListCreateView.as_view(), name='caretaker-reviews'),
     path('messages/', ChatMessageListView.as_view(), name='chat-messages'),
 
     # Messages

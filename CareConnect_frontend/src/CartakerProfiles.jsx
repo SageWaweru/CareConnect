@@ -7,6 +7,7 @@ const CaretakerProfiles = () => {
   const [profiles, setProfiles] = useState([]);
   const [ratings, setRatings] = useState({}); 
   const navigate = useNavigate();
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
   const [filteredProfiles, setFilteredProfiles] = useState([]);
   const [filters, setFilters] = useState({
     availability: "",
@@ -16,7 +17,7 @@ const CaretakerProfiles = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/api/caretaker-profiles/")
+      .get(`${API_BASE_URL}/api/caretaker-profiles/`)
       .then((response) => {
         setProfiles(response.data);
         setFilteredProfiles(response.data);
@@ -35,7 +36,7 @@ const CaretakerProfiles = () => {
         profiles.map(async (profile) => {
           try {
             const response = await axios.get(
-              `http://localhost:8000/api/api/caretaker/${profile.id}/reviews/`
+              `${API_BASE_URL}/api/caretaker/${profile.id}/reviews/`
             );
             const reviews = response.data;
             const totalRating = reviews.reduce((acc, review) => acc + review.rating, 0);

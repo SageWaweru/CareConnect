@@ -5,6 +5,8 @@ const SchoolProfile = () => {
   const [school, setSchool] = useState(null);
   const [profileNotFound, setProfileNotFound] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
   const [formData, setFormData] = useState({
     name: "",
     logo: null,
@@ -17,7 +19,7 @@ const SchoolProfile = () => {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/school/", {
+      .get(`${API_BASE_URL}/api/school/`, {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       })
       .then((res) => {
@@ -60,7 +62,7 @@ const SchoolProfile = () => {
         formDataToSend.append("logo", formData.logo);
       }
   
-      const res = await axios.post("http://127.0.0.1:8000/api/school/", formDataToSend, {
+      const res = await axios.post(`${API_BASE_URL}/api/school/`, formDataToSend, {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
           "Content-Type": "multipart/form-data",
@@ -88,7 +90,7 @@ const SchoolProfile = () => {
         formDataToSend.append("logo", formData.logo); 
       }
   
-      const res = await axios.patch("http://127.0.0.1:8000/api/school/", formDataToSend, {
+      const res = await axios.patch(`${API_BASE_URL}/api/school/`, formDataToSend, {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
           "Content-Type": "multipart/form-data",

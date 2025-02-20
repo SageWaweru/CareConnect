@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 
 const SchoolList = () => {
   const [schools, setSchools] = useState([]);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
   const navigate = useNavigate();
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/schools/"); 
+        const response = await fetch(`${API_BASE_URL}/api/schools/`); 
         const data = await response.json();
         setSchools(data); 
       } catch (error) {

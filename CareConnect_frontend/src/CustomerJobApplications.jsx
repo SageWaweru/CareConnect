@@ -7,6 +7,8 @@ function CustomerJobApplications() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
   const [updatedJobDetails, setUpdatedJobDetails] = useState({
     title: '',
     description: '',
@@ -24,12 +26,12 @@ function CustomerJobApplications() {
     const fetchApplicationsAndJobs = async () => {
       try {
         const [applicationsResponse, jobsResponse] = await Promise.all([
-          axios.get('http://localhost:8000/api/applications/', {
+          axios.get(`${API_BASE_URL}/api/applications/`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
           }),
-          axios.get('http://localhost:8000/api/jobs/', {
+          axios.get(`${API_BASE_URL}/api/jobs/`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
@@ -86,7 +88,7 @@ function CustomerJobApplications() {
   
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/jobs/${jobId}/`,
+        `${API_BASE_URL}/api/jobs/${jobId}/`,
         updatedJobDetails,
         {
           headers: {
@@ -99,7 +101,7 @@ function CustomerJobApplications() {
   
       alert("Job updated successfully");
   
-      const updatedJobsResponse = await axios.get('http://localhost:8000/api/jobs/', {
+      const updatedJobsResponse = await axios.get(`${API_BASE_URL}/api/jobs/`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -119,7 +121,7 @@ function CustomerJobApplications() {
   const handleJobDelete = async (jobId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/jobs/${jobId}/`,
+        `${API_BASE_URL}/api/jobs/${jobId}/`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -146,7 +148,7 @@ function CustomerJobApplications() {
   const handleHireCaretaker = async (applicationId) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/applications/${applicationId}/update/`,
+       `${API_BASE_URL}/api/applications/${applicationId}/update/`,
         { status: "Hired" },
         {
           headers: {
@@ -170,7 +172,7 @@ function CustomerJobApplications() {
   const handleRejectCaretaker = async (applicationId) => {
     try {
       const response = await axios.patch(
-        `http://localhost:8000/api/applications/${applicationId}/update/`,
+        `${API_BASE_URL}/api/applications/${applicationId}/update/`,
         { status: "Rejected" },
         {
           headers: {

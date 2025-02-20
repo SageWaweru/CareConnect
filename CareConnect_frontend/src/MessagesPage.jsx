@@ -6,16 +6,16 @@ const MessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [reply, setReply] = useState("");
   const [messageId, setMessageId] = useState(null);
-  const [senderUsername, setSenderUsername] = useState(""); // Store sender's username
-  const { sender } = useParams(); // The sender's user ID
+  const [senderUsername, setSenderUsername] = useState(""); 
+  const { sender } = useParams(); 
   const navigate = useNavigate();
   const loggedInUserId = parseInt(localStorage.getItem("userId"), 10);
-  const [replyToMessageId, setReplyToMessageId] = useState(null); // Store messageId for reply
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const [replyToMessageId, setReplyToMessageId] = useState(null); 
 
-  // Fetch messages from the sender
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/messages/${sender}`, {
+      .get(`${API_BASE_URL}/api/messages/${sender}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -31,10 +31,9 @@ const MessagesPage = () => {
       });
   }, [sender, navigate]);
 
-  // Fetch the sender's username
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/api/users/${sender}`, {
+      .get(`${API_BASE_URL}/api/users/${sender}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -60,7 +59,7 @@ const MessagesPage = () => {
     console.log("Sending reply:", data);
   
     axios
-      .post(`http://localhost:8000/api/messages/${messageId}/replies/`, data, {
+      .post(`${API_BASE_URL}/api/messages/${messageId}/replies/`, data, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
@@ -74,7 +73,7 @@ const MessagesPage = () => {
       })
       .finally(() => {
         axios
-          .get(`http://localhost:8000/api/messages/${sender}`, {
+          .get(`${API_BASE_URL}/api/messages/${sender}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
             },
@@ -85,11 +84,10 @@ const MessagesPage = () => {
           .catch((err) => console.error("Error fetching updated messages:", err));
       });
   };
-    // Handle setting up reply to a specific message
   const handleReplyToMessage = (messageId) => {
-    setReplyToMessageId(messageId); // Set messageId to reply to
-    setMessageId(messageId); // Set the messageId for reply
-    setReply(""); // Clear any current text in the reply input
+    setReplyToMessageId(messageId);
+    setMessageId(messageId); 
+    setReply(""); 
   };
 
   return (

@@ -5,10 +5,11 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
 
   const login = async (formData) => {
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login/', formData, {
+      const response = await axios.post(`${API_BASE_URL}/api/login/`, formData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('accessToken', response.data.access);
       localStorage.setItem('refreshToken', response.data.refresh);
 
-      const userDetailsResponse = await axios.get('http://127.0.0.1:8000/api/users/', {
+      const userDetailsResponse = await axios.get(`${API_BASE_URL}/api/users/`, {
         headers: {
           Authorization: `Bearer ${response.data.access}`,
         },

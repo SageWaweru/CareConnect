@@ -9,18 +9,20 @@ function JobApplications() {
   const [showModal, setShowModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [coverLetter, setCoverLetter] = useState("");
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   useEffect(() => {
     const fetchJobsAndApplications = async () => {
       try {
-        const jobsResponse = await axios.get("http://localhost:8000/api/jobs/", {
+        const jobsResponse = await axios.get(`${API_BASE_URL}/api/jobs/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         });
         setJobs(jobsResponse.data);
 
-        const applicationsResponse = await axios.get("http://localhost:8000/api/applications/", {
+        const applicationsResponse = await axios.get(`${API_BASE_URL}/api/applications/`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
@@ -60,7 +62,7 @@ function JobApplications() {
     if (!selectedJob) return;
     try {
       await axios.post(
-        "http://localhost:8000/api/applications/",
+        `${API_BASE_URL}/api/applications/`,
         { job: selectedJob.id, cover_letter: coverLetter },
         {
           headers: {

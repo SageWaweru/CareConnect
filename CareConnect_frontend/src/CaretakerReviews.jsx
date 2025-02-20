@@ -9,13 +9,15 @@ const CaretakerReviews = () => {
     const [error, setError] = useState('');
     const { caretakerId } = useParams();
     const navigate = useNavigate();
+    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
     useEffect(() => {
         const fetchReviews = async () => {
             const token = localStorage.getItem('accessToken');
             try {
                 const response = await axios.get(
-                    `http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`,
+                    `${API_BASE_URL}/api/caretaker/${caretakerId}/reviews/`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

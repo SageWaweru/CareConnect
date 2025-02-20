@@ -10,6 +10,8 @@ function CreateJobPost() {
     const [rateType, setRateType] = useState('hour');
     const [duration, setDuration] = useState('');
     const [status, setStatus] = useState('Open');
+    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +26,7 @@ function CreateJobPost() {
             status
         };
         try {
-            await axios.post('http://localhost:8000/api/jobs/', jobData, {
+            await axios.post(`${API_BASE_URL}/api/jobs/`, jobData, {
                 headers: {
                   Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
                   'Content-Type': 'application/json',

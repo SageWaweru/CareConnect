@@ -9,6 +9,7 @@ const Login = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
+
     useEffect(() => {
       if (user) {
         setIsAdmin(user.role === 'admin' || user.is_superuser);

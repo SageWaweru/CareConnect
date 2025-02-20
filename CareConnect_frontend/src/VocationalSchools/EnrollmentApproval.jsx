@@ -3,16 +3,18 @@ import axios from "axios";
 
 const EnrollmentApproval = () => {
   const [enrollments, setEnrollments] = useState([]);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+
 
   useEffect(() => {
-    axios.get("http://127.0.0.1:8000/api/enrollments/") 
+    axios.get(`${API_BASE_URL}/api/enrollments/`) 
       .then(res => setEnrollments(res.data))
       .catch(err => console.error(err));
   }, []);
 
   const handleApproval = (id, status) => {
     axios
-      .patch(`http://127.0.0.1:8000/api/enrollment/${id}/`, { status }) 
+      .patch(`${API_BASE_URL}/api/enrollment/${id}/`, { status }) 
       .then(() => {
         setEnrollments(enrollments.map(en => 
           en.id === id ? { ...en, status } : en

@@ -10,6 +10,7 @@ const ProfileView = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [averageRating, setAverageRating] = useState(0); 
   const [caretakerId, setCaretakerId] = useState(null);
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
   const [formData, setFormData] = useState({
     name: "",
     certifications: "",
@@ -27,7 +28,7 @@ const ProfileView = () => {
         setLoading(true); 
         const userId = localStorage.getItem("userId");
         const response = await axios.get(
-          `http://localhost:8000/api/api/caretaker-profiles/user/${userId}/`,
+          `${API_BASE_URL}/api/caretaker-profiles/user/${userId}/`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -68,7 +69,7 @@ const ProfileView = () => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/api/caretaker/${caretakerId}/reviews/`
+          `${API_BASE_URL}/api/caretaker/${caretakerId}/reviews/`
         );
         const reviews = response.data;
         if (reviews.length > 0) {
@@ -105,12 +106,12 @@ const ProfileView = () => {
   const handleImageUpload = () => {
     window.cloudinary.openUploadWidget(
       {
-        cloud_name: "dpb7i0th4", // Replace with your Cloudinary cloud name
-        upload_preset: "Profile-Pictures", // Replace with your upload preset name
+        cloud_name: "dpb7i0th4", 
+        upload_preset: "Profile-Pictures", 
         sources: ["local", "url", "camera"],
         multiple: false,
         cropping: true,
-        max_file_size: 10000000, // 10MB
+        max_file_size: 10000000, 
         client_allowed_formats: ["jpg", "png", "jpeg", "gif"],
       },
       function (error, result) {
@@ -123,7 +124,6 @@ const ProfileView = () => {
           setFormData({
             ...formData,
             profile_picture: result.info.secure_url, 
-            // Update the formData with the uploaded image URL
           });            console.log("Profile picture URL:", result.info.secure_url)
 
         }
@@ -166,10 +166,10 @@ const ProfileView = () => {
   
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/api/caretaker-profiles/user/${userId}/`,
+        `${API_BASE_URL}/api/caretaker-profiles/user/${userId}/`,
         {
           ...formData,
-          profile_picture: formData.profile_picture, // Ensure profile picture is included
+          profile_picture: formData.profile_picture, 
         },
         {
           headers: {
@@ -177,14 +177,13 @@ const ProfileView = () => {
           },
         }
       );
-      // After successfully updating the profile
       setCaretaker(prevState => ({
         ...prevState,
-        profile_picture: response.data.profile_picture // Or the correct property from the backend response
+        profile_picture: response.data.profile_picture 
       }));
 
       console.log("Profile updated successfully:", response.data);
-      setCaretaker(response.data); // Ensure caretaker state updates with new picture
+      setCaretaker(response.data); 
       setIsEditing(false);
       alert("Profile updated successfully!");
     } catch (error) {

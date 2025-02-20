@@ -16,6 +16,7 @@ const Profile = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate(); 
+  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
 
   
   useEffect(() => {
@@ -26,7 +27,7 @@ const Profile = () => {
 
     if (refreshToken) {
       axios
-        .post("http://localhost:8000/api/token/refresh/", { refresh: refreshToken })
+        .post(`${API_BASE_URL}/api/token/refresh/`, { refresh: refreshToken })
         .then((response) => {
           localStorage.setItem("accessToken", response.data.access);
         })
@@ -37,7 +38,7 @@ const Profile = () => {
 
     if (accessToken) {
       axios
-        .get("http://localhost:8000/api/users/me/", {
+        .get(`${API_BASE_URL}/api/users/me/`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -79,7 +80,7 @@ const Profile = () => {
         sources: ["local", "url", "camera"],
         multiple: false,
         cropping: true,
-        max_file_size: 10000000, // 10MB
+        max_file_size: 10000000, 
         client_allowed_formats: ["jpg", "png", "jpeg", "gif"],
       },
       function (error, result) {
@@ -90,9 +91,8 @@ const Profile = () => {
         if (result.event === "success") {
           console.log("Image uploaded successfully", result.info);
           
-          // Use the Cloudinary URL directly
-          const imageUrl = result.info.secure_url; // This is the URL of the uploaded image
-          setProfilePicture(imageUrl); // Store the URL, not the file
+          const imageUrl = result.info.secure_url; 
+          setProfilePicture(imageUrl); 
         }
       }
     );
@@ -123,7 +123,6 @@ const Profile = () => {
     formData.append("number_of_ratings", 0);
     formData.append("user", userId);
   
-    // Use the image URL, not the file
     if (profilePicture) {
       formData.append("profile_picture", profilePicture);
     }
@@ -136,7 +135,7 @@ const Profile = () => {
     }
   
     axios
-      .post("http://localhost:8000/api/api/caretaker-profiles/", formData, {
+      .post(`${API_BASE_URL}/api/caretaker-profiles/`, formData, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "multipart/form-data",
