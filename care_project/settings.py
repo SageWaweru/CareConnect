@@ -88,6 +88,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "https://careconnect-1-aayd.onrender.com",  
+    "http://localhost:5173",                    
 ]
 
 CORS_ALLOW_CREDENTIALS = True  
