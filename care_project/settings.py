@@ -115,6 +115,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',

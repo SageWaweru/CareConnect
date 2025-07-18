@@ -52,14 +52,18 @@ class UserLoginView(APIView):
             return Response({"message": "Username and password are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         user = authenticate(username=username, password=password)
+
         if user is not None:
             refresh = RefreshToken.for_user(user)
             return Response({
                 'access': str(refresh.access_token),
                 'refresh': str(refresh),
-                'role': user.role,
+                'role': getattr(user, 'role', None),
+                'is_superuser': user.is_superuser,
+                'user_id': user.id,
+                'username': user.username,
             }, status=status.HTTP_200_OK)
-        
+
         return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
     
 class UserListView(APIView):
