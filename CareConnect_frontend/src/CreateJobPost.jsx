@@ -10,7 +10,7 @@ function CreateJobPost() {
     const [rateType, setRateType] = useState('hour');
     const [duration, setDuration] = useState('');
     const [status, setStatus] = useState('Open');
-    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+    const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
 
     const handleSubmit = async (e) => {

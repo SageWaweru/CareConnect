@@ -38,10 +38,12 @@ class UserRegistrationView(APIView):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():
             try:
+                print("✅ Validated data:", serializer.validated_data)
                 serializer.save()
                 return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
             except Exception as e:
-                print(f"❌ Registration crash: {str(e)}")  # See server logs for error
+                import traceback
+                traceback.print_exc()
                 return Response({"error": "Server error. Try again later."}, status=500)
         return Response(serializer.errors, status=400)
     

@@ -7,7 +7,7 @@ const CaregiverChats = () => {
   const [usernames, setUsernames] = useState({});
   const navigate = useNavigate();
   const loggedInUserId = localStorage.getItem("userId");
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
   
 

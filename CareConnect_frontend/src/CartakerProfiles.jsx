@@ -7,7 +7,7 @@ const CaretakerProfiles = () => {
   const [profiles, setProfiles] = useState([]);
   const [ratings, setRatings] = useState({}); 
   const navigate = useNavigate();
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
   const [filteredProfiles, setFilteredProfiles] = useState([]);
   const [filters, setFilters] = useState({
     availability: "",

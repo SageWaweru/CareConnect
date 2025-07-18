@@ -12,7 +12,7 @@ const CaretakerProfileDetails = () => {
   const [chatOpen, setChatOpen] = useState(false);
   const navigate = useNavigate();
   const customerId = localStorage.getItem("userId");
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
   useEffect(() => {
     axios

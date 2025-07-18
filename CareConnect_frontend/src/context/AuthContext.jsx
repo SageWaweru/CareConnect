@@ -5,7 +5,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
   const login = async (formData) => {
     try {

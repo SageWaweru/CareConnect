@@ -7,7 +7,7 @@ function CustomerJobApplications() {
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [editingJobId, setEditingJobId] = useState(null);
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
   const [updatedJobDetails, setUpdatedJobDetails] = useState({
     title: '',

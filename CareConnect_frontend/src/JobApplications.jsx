@@ -9,7 +9,7 @@ function JobApplications() {
   const [showModal, setShowModal] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [coverLetter, setCoverLetter] = useState("");
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
 
   useEffect(() => {

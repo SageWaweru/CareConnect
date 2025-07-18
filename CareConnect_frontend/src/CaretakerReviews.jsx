@@ -9,7 +9,7 @@ const CaretakerReviews = () => {
     const [error, setError] = useState('');
     const { caretakerId } = useParams();
     const navigate = useNavigate();
-    const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
 
 
     useEffect(() => {

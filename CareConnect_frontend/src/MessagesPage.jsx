@@ -10,7 +10,7 @@ const MessagesPage = () => {
   const { sender } = useParams(); 
   const navigate = useNavigate();
   const loggedInUserId = parseInt(localStorage.getItem("userId"), 10);
-  const API_BASE_URL = "https://careconnect-1-aayd.onrender.com";
+  const API_BASE_URL = "https://careconnect-2-j2tv.onrender.com";
   const [replyToMessageId, setReplyToMessageId] = useState(null); 
 
   useEffect(() => {
