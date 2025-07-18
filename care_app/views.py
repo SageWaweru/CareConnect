@@ -31,15 +31,16 @@ def index(request):
 
 User = get_user_model()
 
-class UserRegistrationView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = UserRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
+def post(self, request):
+    serializer = UserRegistrationSerializer(data=request.data)
+    if serializer.is_valid():
+        try:
             serializer.save()
             return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"❌ Registration crash: {str(e)}")  # See server logs for error
+            return Response({"error": "Server error. Try again later."}, status=500)
+    return Response(serializer.errors, status=400)
     
 class UserLoginView(APIView):
     permission_classes = [AllowAny]
