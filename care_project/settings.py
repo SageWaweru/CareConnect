@@ -34,7 +34,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 
-ALLOWED_HOSTS = ["careconnect-1-aayd.onrender.com", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["careconnect-2-j2tv.onrender.com", "localhost", "127.0.0.1"]
 
 # Application definition
 
