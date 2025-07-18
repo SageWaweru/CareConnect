@@ -12,7 +12,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'email', 'password', 'role']
         extra_kwargs = {'password': {'write_only': True}}
-        
+
     def create(self, validated_data):
         user = User.objects.create_user(
             username=validated_data['username'],
@@ -21,6 +21,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             role=validated_data['role']
         )
         return user
+    
     
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.CharField()

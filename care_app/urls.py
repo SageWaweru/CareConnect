@@ -44,6 +44,7 @@ router.register(r'caretaker-profiles', CaretakerProfileViewSet, basename='careta
 
 
 urlpatterns = [
+    path('api/', include([
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
@@ -112,6 +113,7 @@ urlpatterns = [
     path('admin/schools/', AdminSchoolListView.as_view(), name='admin-schools'),
     path('admin/enrollments/', AdminEnrollmentListView.as_view(), name='admin-enrollments'),
 
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
   
+   ])),
 ]
