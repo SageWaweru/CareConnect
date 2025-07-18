@@ -179,7 +179,7 @@ ASGI_APPLICATION = 'care_project.asgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('DATABASE_URL')  
+        default=config('EXTERNAL')  
     )
 }
 # Password validation
