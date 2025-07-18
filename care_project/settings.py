@@ -30,10 +30,11 @@ import dj_database_url
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+# DEBUG = False
+DEBUG = True
+
 
 ALLOWED_HOSTS = ["careconnect-1-aayd.onrender.com", "localhost", "127.0.0.1"]
-
 
 # Application definition
 
@@ -94,7 +95,24 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [
     'Authorization',
     'Content-Type',
+    "accept",
+    "accept-encoding",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
 ]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
